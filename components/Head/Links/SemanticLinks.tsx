@@ -47,8 +47,10 @@ const links = [
 export class SemanticLinks extends React.Component {
   constructor(props: {}) {
     super(props);
+
     if (process.env.SERVER) {
       const notExistingLinks = links.filter((link) => !fs.existsSync(path.join('./', link)));
+
       if (notExistingLinks.length > 0) {
         throw new Error(
           `Styles not found:\n${notExistingLinks.join('\n')}.\nYou may solve it by: npm run build:static`,
@@ -60,9 +62,7 @@ export class SemanticLinks extends React.Component {
   public render() {
     return (
       <>
-        {links.map((link) => (
-          <link type="text/css" rel="stylesheet" href={link} key={link} />
-        ))}
+        { links.map((link) => <link type="text/css" rel="stylesheet" href={link} key={link} />) }
       </>
     );
   }

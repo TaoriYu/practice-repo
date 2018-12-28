@@ -17,5 +17,6 @@ export function serverConfig<T extends keyof TBuildedConfigFields>(key: T): TBui
 export function serverConfig(): TBuildedConfigFields;
 export function serverConfig<T extends keyof TBuildedConfigFields>(key?: T): TBuildedConfigFields | TBuildedConfigFields[T] {
   const { serverRuntimeConfig } = getConfig();
+
   return key ? serverRuntimeConfig[key] : serverRuntimeConfig;
 }

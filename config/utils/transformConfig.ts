@@ -49,6 +49,7 @@ export function transform<Fields extends TReturnConfigGroup<Fields>, T extends I
       } else {
         Object.assign(acc.serverRuntimeConfig[cfgPartName], { [val]: configGroup });
       }
+
       return acc;
     },
     cfg,

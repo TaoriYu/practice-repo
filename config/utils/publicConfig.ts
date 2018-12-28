@@ -17,5 +17,6 @@ export function publicConfig<T extends keyof TBuildedConfigFields>(key: T): TBui
 export function publicConfig(): TBuildedConfigFields;
 export function publicConfig<T extends keyof TBuildedConfigFields>(key?: T): TBuildedConfigFields | TBuildedConfigFields[T] {
   const { publicRuntimeConfig } = getConfig();
+
   return key ? publicRuntimeConfig[key] : publicRuntimeConfig;
 }
