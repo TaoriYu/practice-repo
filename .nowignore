@@ -1,0 +1,7 @@
+.idea
+_templates
+./semantic
+.cz-config.js
+.hygen.js
+commitlint.config.js
+.next
