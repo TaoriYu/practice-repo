@@ -25,13 +25,10 @@ const customs = () => ({
     }
 
     if (!options.isServer) {
-      config.plugins.push(new BundleAnalyzerPlugin())
-      if (process.env.NODE_ENV === 'production') {
-        config.plugins.push(new webpack.IgnorePlugin(/debug/))
-        config.plugins.push(new webpack.IgnorePlugin(/.*core-js.*/))
+      if (process.env.NODE_ANALYZE) {
+        config.plugins.push(new BundleAnalyzerPlugin());
       }
     }
-
     return config
   },
   ...getConfig(),
