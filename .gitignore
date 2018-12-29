@@ -20,7 +20,9 @@ yarn-error.log*
 
 /.idea
 /semantic/dist
-/static/semantic/
+/static/semantic.css
+/static/semantic.min.css
+/static/themes
 
 # Configuration files on js
 /config/dist
