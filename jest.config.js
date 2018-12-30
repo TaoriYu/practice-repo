@@ -4,6 +4,7 @@ module.exports = {
   setupFiles: [
     './stores/provider/container.ts',
     './utils/tests/configMock.ts',
+    './utils/tests/configurationMock.ts'
   ],
   globals: {
     'ts-jest': {

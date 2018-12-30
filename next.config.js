@@ -22,12 +22,24 @@ const customs = () => ({
         [/next\/config/, 'next-server/config'],
         [/next\/head/, 'next-server/head'],
       ].map(args => new webpack.NormalModuleReplacementPlugin(...args)));
+      config.plugins.push(
+        new webpack.DefinePlugin({
+          'process.env.SERVER_CONFIG': `'${JSON.stringify(getConfig())}'`
+        })
+      )
     }
 
     if (!options.isServer) {
       if (process.env.NODE_ANALYZE) {
         config.plugins.push(new BundleAnalyzerPlugin());
       }
+      config.plugins.push(
+        new webpack.DefinePlugin({
+          'process.env.SERVER_CONFIG': `'${
+            JSON.stringify({ publicRuntimeConfig: getConfig().publicRuntimeConfig })
+            }'`
+        })
+      )
     }
     return config
   },

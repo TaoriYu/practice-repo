@@ -1,4 +1,3 @@
-import getConfig from 'next/config';
 import { TBuildedConfigFields } from '../types/internals';
 
 /**
@@ -16,7 +15,7 @@ import { TBuildedConfigFields } from '../types/internals';
 export function serverConfig<T extends keyof TBuildedConfigFields>(key: T): TBuildedConfigFields[T];
 export function serverConfig(): TBuildedConfigFields;
 export function serverConfig<T extends keyof TBuildedConfigFields>(key?: T): TBuildedConfigFields | TBuildedConfigFields[T] {
-  const { serverRuntimeConfig } = getConfig();
+  const { serverRuntimeConfig } = JSON.parse(process.env.SERVER_CONFIG as string);
 
   return key ? serverRuntimeConfig[key] : serverRuntimeConfig;
 }
