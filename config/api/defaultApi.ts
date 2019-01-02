@@ -8,7 +8,7 @@ export const defaultApi: IWithEnv<IApi> = {
     public: true,
   },
   production: {
-    baseURL: 'http://api.github.com',
+    baseURL: 'https://api.github.com',
     timeout: 2000,
     public: true,
   }
