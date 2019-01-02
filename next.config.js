@@ -6,7 +6,7 @@ const compileConfig = require('./config/compileConfig');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const customs = () => ({
-  webpack: async (config, options) => {
+  webpack: (config, options) => {
     // Fixes npm packages that depend on `fs` module
     config.node = {
       fs: 'empty',
@@ -31,7 +31,7 @@ const customs = () => ({
         config.plugins.push(new BundleAnalyzerPlugin());
       }
     }
-    await compileConfig();
+    compileConfig();
     return config
   },
 });
