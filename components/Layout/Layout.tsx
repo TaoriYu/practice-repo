@@ -14,7 +14,7 @@ export function Layout({ children }: ILayoutProps) {
         <Menu attached="top">
           <Link href="/" prefetch>
             <Menu.Item as="a">Repositories</Menu.Item>
-          </Link>0
+          </Link>
           <Link href="/users" prefetch>
             <Menu.Item as="a">Users</Menu.Item>
           </Link>
