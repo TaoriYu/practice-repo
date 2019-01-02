@@ -1,4 +1,3 @@
-import getConfig from 'next/config';
 import { TBuildedConfigFields } from '../types/internals';
 
 /**
@@ -16,7 +15,11 @@ import { TBuildedConfigFields } from '../types/internals';
 export function serverConfig<T extends keyof TBuildedConfigFields>(key: T): TBuildedConfigFields[T];
 export function serverConfig(): TBuildedConfigFields;
 export function serverConfig<T extends keyof TBuildedConfigFields>(key?: T): TBuildedConfigFields | TBuildedConfigFields[T] {
-  const { serverRuntimeConfig } = getConfig();
+  let serverRuntimeConfig = {} as TBuildedConfigFields;
+  if (process.env.IS_SERVER) {
+    // tslint:disable-next-line:no-require-imports
+    serverRuntimeConfig = require('../dist/config.private.json').serverRuntimeConfig;
+  }
 
   return key ? serverRuntimeConfig[key] : serverRuntimeConfig;
 }

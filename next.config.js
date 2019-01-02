@@ -19,14 +19,14 @@ module.exports = (phase, { defaultConfig }) => {
       importLoaders: 1,
       localIdentName: "[name]_[local]__[hash:base64:5]",
     },
-    ...customs(phase),
+    ...customs(),
   }));
 };
 
-function customs(phase) {
+function customs() {
   const webpack = require('webpack');
   const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-  const getConfig = require('./config/compileConfig');
+  const compileConfig = require('./config/compileConfig');
   const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
   return {
@@ -48,15 +48,17 @@ function customs(phase) {
           [/next\/head/, 'next-server/head'],
         ].map(args => new webpack.NormalModuleReplacementPlugin(...args)));
       }
-
+      config.plugins.push(
+        new webpack.DefinePlugin({ 'process.env.IS_SERVER': options.isServer })
+      );
       if (!options.isServer) {
         if (process.env.NODE_ANALYZE) {
           config.plugins.push(new BundleAnalyzerPlugin());
         }
       }
+      compileConfig();
       return config
     },
-    ...getConfig(),
+
   };
 }
-

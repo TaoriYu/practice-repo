@@ -1,4 +1,6 @@
 const debug = require('debug')('config');
+const fs = require('fs');
+const path = require('path');
 
 /**
  * Так как config пишется на ts пере использованием его надо странспилировать в js
@@ -15,8 +17,17 @@ module.exports = function compileConfig() {
   } else {
     debug('configuration compiled successfully')
   }
+  const appConfig = require(`./dist/config.js`).appConfig;
+  const appConfigJson = JSON.stringify(appConfig);
+  const appPublicConfigJson = JSON.stringify({ publicRuntimeConfig: appConfig.publicRuntimeConfig });
 
-  debug(require(`./dist/config.js`));
-
-  return require(`./dist/config.js`).appConfig;
+  debug(appConfig);
+  fs.writeFileSync(
+    path.join(__dirname, './dist/config.private.json'),
+    appConfigJson
+  );
+  fs.writeFileSync(
+    path.join(__dirname, './dist/config.public.json'),
+    appPublicConfigJson
+  );
 };

@@ -1,6 +1,6 @@
 import { AxiosRequestConfig } from 'axios';
 
-jest.mock('next/config', () => () => ({
+jest.mock('../../config/dist/config.public.json', () => ({
   publicRuntimeConfig: {
     apis: {
       defaultApi: {
