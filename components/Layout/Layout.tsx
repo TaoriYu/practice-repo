@@ -20,7 +20,7 @@ export function Layout({ children }: ILayoutProps) {
           </Link>
         </Menu>
         <Segment attached="bottom">
-          {children }
+          {children}
         </Segment>
       </Container>
     </div>
