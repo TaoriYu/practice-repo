@@ -2,11 +2,11 @@ const webpack = require('webpack');
 const withTypescript = require('./utils/build/withTypescript');
 const withCSS = require('@zeit/next-css');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-const getConfig = require('./config/compileConfig');
+const compileConfig = require('./config/compileConfig');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const customs = () => ({
-  webpack: (config, options) => {
+  webpack: async (config, options) => {
     // Fixes npm packages that depend on `fs` module
     config.node = {
       fs: 'empty',
@@ -22,28 +22,18 @@ const customs = () => ({
         [/next\/config/, 'next-server/config'],
         [/next\/head/, 'next-server/head'],
       ].map(args => new webpack.NormalModuleReplacementPlugin(...args)));
-      config.plugins.push(
-        new webpack.DefinePlugin({
-          'process.env.SERVER_CONFIG': `'${JSON.stringify(getConfig())}'`
-        })
-      )
     }
-
+    config.plugins.push(
+      new webpack.DefinePlugin({ 'process.env.IS_SERVER': options.isServer })
+    );
     if (!options.isServer) {
       if (process.env.NODE_ANALYZE) {
         config.plugins.push(new BundleAnalyzerPlugin());
       }
-      config.plugins.push(
-        new webpack.DefinePlugin({
-          'process.env.SERVER_CONFIG': `'${
-            JSON.stringify({ publicRuntimeConfig: getConfig().publicRuntimeConfig })
-            }'`
-        })
-      )
     }
+    await compileConfig();
     return config
   },
-  ...getConfig(),
 });
 
 module.exports = withTypescript(withCSS({

@@ -15,7 +15,8 @@ import { TBuildedConfigFields } from '../types/internals';
 export function publicConfig<T extends keyof TBuildedConfigFields>(key: T): TBuildedConfigFields[T];
 export function publicConfig(): TBuildedConfigFields;
 export function publicConfig<T extends keyof TBuildedConfigFields>(key?: T): TBuildedConfigFields | TBuildedConfigFields[T] {
-  const { publicRuntimeConfig } = JSON.parse(process.env.SERVER_CONFIG as string);
+  // tslint:disable-next-line:no-require-imports
+  const { publicRuntimeConfig } = require('../dist/config.public.json');
 
   return key ? publicRuntimeConfig[key] : publicRuntimeConfig;
 }
