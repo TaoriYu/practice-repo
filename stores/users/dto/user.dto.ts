@@ -7,6 +7,6 @@ export class UserDto {
   @Expose({ name: 'avatar_url' })
   public avatarUrl: string = '';
 
-  @Expose()
-  public url: string = '';
+  @Expose({ name: 'html_url' })
+  public htmlUrl: string = '';
 }

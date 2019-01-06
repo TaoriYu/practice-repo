@@ -11,7 +11,7 @@ export function UserItem({ user }: IUserItemProps) {
     <List.Item>
       <Image avatar src={user.avatarUrl} />
       <List.Content>
-        <List.Header as="a">{user.login}</List.Header>
+        <List.Header as="a" href={user.htmlUrl} target="_blank">{user.login}</List.Header>
       </List.Content>
     </List.Item>
   );

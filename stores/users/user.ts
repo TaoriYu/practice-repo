@@ -5,7 +5,7 @@ import { UserDto } from './dto';
 export class User extends Transit<UserDto> {
   @observable public login: string = '';
   @observable public avatarUrl: string = '';
-  @observable public url: string = '';
+  @observable public htmlUrl: string = '';
 
   public fromDTO(dto: UserDto) {
     this.fillSelf(dto);
