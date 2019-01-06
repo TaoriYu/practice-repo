@@ -1,3 +1,4 @@
+import { observer } from 'mobx-react';
 import * as React from 'react';
 import { Button, Input } from 'semantic-ui-react';
 import { injectStore } from '../../stores/provider/InjectStore';
@@ -7,24 +8,16 @@ export interface ISearchProps {
   usersStore: UsersStore;
 }
 
-export interface ISearchState {
-  query: string;
-}
-
-export class Search extends React.Component<ISearchProps, ISearchState> {
-
-  public readonly state = {
-    query: ''
-  };
-
+@observer
+export class Search extends React.Component<ISearchProps> {
   public render() {
-    const { query } = this.state;
+    const { usersStore } = this.props;
 
     return (
       <div>
         <form onSubmit={this.handleSubmit}>
           <Input fluid action>
-            <input type="text" value={query} onChange={this.handleChange} />
+            <input type="text" value={usersStore.query} onChange={this.handleChange} />
             <Button color="blue">Run</Button>
           </Input>
         </form>
@@ -33,12 +26,12 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
   }
 
   private handleChange = ({ currentTarget }: React.SyntheticEvent<HTMLInputElement>) => {
-    this.setState({ query: currentTarget.value });
+    this.props.usersStore.setQuery(currentTarget.value);
   }
 
-  private handleSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
+  private handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
-    this.props.usersStore.searchUsers(this.state.query);
+    await this.props.usersStore.searchUsers();
   }
 }
 

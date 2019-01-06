@@ -8,11 +8,12 @@ import { User } from './user';
 export class UsersStore extends Api<UsersDto> {
   @observable public users: User[] = [];
   @observable public totalCount: number = 0;
+  @observable public query: string = '';
 
-  @action public async searchUsers(query: string) {
+  @action public async searchUsers() {
     const { data } = await this.api.get('/search/users', {
       params: {
-        q: query,
+        q: this.query,
         order: 'desc'
       }
     });
@@ -20,5 +21,9 @@ export class UsersStore extends Api<UsersDto> {
     const { items, totalCount } = this.toDTO(UsersDto, data);
     this.users = items.map((item) => new User().fromDTO(item));
     this.totalCount = totalCount;
+  }
+
+  @action public setQuery(query: string) {
+    this.query = query;
   }
 }
