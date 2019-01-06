@@ -5,7 +5,7 @@ import { UsersDto } from './dto';
 import { User } from './user';
 
 @makeStore(UsersStore)
-export class UsersStore extends Api {
+export class UsersStore extends Api<UsersDto> {
   @observable public users: User[] = [];
   @observable public totalCount: number = 0;
 

@@ -2,7 +2,7 @@ import { observable } from 'mobx';
 import { Transit } from '../api/transit';
 import { RepoDto } from './dto';
 
-export class Repo extends Transit {
+export class Repo extends Transit<RepoDto> {
   @observable public id: number = 0;
   @observable public name: string = '';
   @observable public fullName: string = '';

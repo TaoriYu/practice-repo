@@ -21,7 +21,7 @@ import { Transit } from './transit';
  *   }
  * }
  */
-export abstract class Api extends Transit {
+export abstract class Api<DtoClass> extends Transit<DtoClass> {
   protected readonly api: AxiosInstance;
   /**
    * run with: evn DEBUG=Api:* npm run dev  - to debug on the server

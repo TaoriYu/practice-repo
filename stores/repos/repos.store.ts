@@ -5,7 +5,7 @@ import { SearchResults } from './dto';
 import { Repo } from './Repo';
 
 @makeStore(ReposStore)
-export class ReposStore extends Api {
+export class ReposStore extends Api<SearchResults> {
   @observable public repos: Repo[] = [];
   @observable public totalCount: number = 0;
 
