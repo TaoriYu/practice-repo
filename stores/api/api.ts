@@ -23,7 +23,10 @@ import { Transit } from './transit';
  */
 export abstract class Api extends Transit {
   protected readonly api: AxiosInstance;
-  /** use evn DEBUG=Api:* npm run dev */
+  /**
+   * run with: evn DEBUG=Api:* npm run dev  - to debug on the server
+   * and use localStorage.debug = "Api:*"  - to debug on the client
+   */
   private apiDebug = debug(`Api:${this.constructor.name}`);
 
   public constructor(@unmanaged() keyOrInstance?: keyof IConfigFields['apis'] | AxiosInstance) {
