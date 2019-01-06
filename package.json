@@ -1,7 +1,7 @@
 {
   "name": "template-app",
   "scripts": {
-    "dev": "next",
+    "dev": "env NODE_ENV=development next",
     "build": "next build",
     "build:static": "gulp --gulpfile ./semantic/gulpfile.js build",
     "start": "next start",
