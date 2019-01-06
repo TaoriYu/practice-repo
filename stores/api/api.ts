@@ -58,9 +58,9 @@ export abstract class Api<DtoClass> extends Transit<DtoClass> {
     const { baseURL, url } = response.config;
 
     this.apiDebug('==response==');
-    this.apiDebug({ baseURL, url });
-    this.apiDebug(response.headers);
-    this.apiDebug(response.data);
+    this.apiDebug('urls: %o', { baseURL, url });
+    this.apiDebug('headers: %O', response.headers);
+    this.apiDebug('data: %O', response.data);
     this.apiDebug('====end====');
 
     return response;
