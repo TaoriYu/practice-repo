@@ -4,7 +4,7 @@ import { OmitDif } from '../../types/helpers';
 import { provide } from '../provider/provide';
 
 @provide(Transit)
-export class Transit {
+export class Transit<DtoClass> {
 
   /**
    * Transform object to DTO, if not data provided transform this to DTO
@@ -13,18 +13,18 @@ export class Transit {
    * @param {ClassType<D>} dto
    * @returns {D}
    */
-  protected toDTO<D>(dto: ClassType<D>): D;
-  protected toDTO<D, T extends any[]>(dto: ClassType<D>, data: T[]): D[];
-  protected toDTO<D, T extends object>(dto: ClassType<D>, data: T): D;
-  protected toDTO<D, T extends Transit>(dto: ClassType<D>, data?: T | T[]): D | D[] {
+  protected toDTO(dto: ClassType<DtoClass>): DtoClass;
+  protected toDTO<T extends any[]>(dto: ClassType<DtoClass>, data: T[]): DtoClass[];
+  protected toDTO<T extends object>(dto: ClassType<DtoClass>, data: T): DtoClass;
+  protected toDTO<T extends Transit<DtoClass>>(dto: ClassType<DtoClass>, data?: T | T[]): DtoClass | DtoClass[] {
     if (Array.isArray(data)) {
-      return plainToClass<D, object[]>(dto, data, { strategy: 'excludeAll' });
+      return plainToClass<DtoClass, object[]>(dto, data, { strategy: 'excludeAll' });
     } else if (data instanceof Transit) {
-      return plainToClass<D, object>(dto, data.asPlain(), { strategy: 'excludeAll' });
+      return plainToClass<DtoClass, object>(dto, data.asPlain(), { strategy: 'excludeAll' });
     } else if (data) {
-      return plainToClass<D, T>(dto, data, { strategy: 'excludeAll' });
+      return plainToClass<DtoClass, T>(dto, data, { strategy: 'excludeAll' });
     } else {
-      return plainToClass<D, this>(dto, this, { strategy: 'excludeAll' });
+      return plainToClass<DtoClass, this>(dto, this, { strategy: 'excludeAll' });
     }
   }
 
@@ -32,9 +32,9 @@ export class Transit {
    * Fill class that inherit Transit with data. Key declaration must exist
    * @param {D} dto
    */
-  protected fillSelf<D extends object>(this: any, dto: D): void {
+  protected fillSelf(this: any, dto: DtoClass): void {
     for (const key in dto) if (key in this && key in dto) {
-      this[key] = dto[key] as unknown as OmitDif<this, D>;
+      this[key] = dto[key] as unknown as OmitDif<this, DtoClass>;
     }
   }
 
