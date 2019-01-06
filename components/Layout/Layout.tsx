@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as styles from './layout.css';
 import Link from 'next/link';
+import DevTools from 'mobx-react-devtools';
 import { Container, Menu, Segment } from 'semantic-ui-react';
 
 export interface ILayoutProps {
@@ -10,6 +11,7 @@ export interface ILayoutProps {
 export function Layout({ children }: ILayoutProps) {
   return (
     <div className={styles.main}>
+      { process.env.NODE_ENV === 'development' && <DevTools /> }
       <Container>
         <Menu attached="top">
           <Link href="/" prefetch>
