@@ -12,6 +12,7 @@ export class Repo extends Transit {
 
   public fromDto(dto: RepoDto): this {
     this.fillSelf(dto);
+
     return this;
   }
 
@@ -20,6 +21,7 @@ export class Repo extends Transit {
     const month = this.pushedAt.getMonth() + 1;
     const year = this.pushedAt.getFullYear();
     const addZero = (d: number) => d < 10 ? `0${d}` : d;
+
     return `${addZero(day)}.${addZero(month)}.${year}`;
   }
 }

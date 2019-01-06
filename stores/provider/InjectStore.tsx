@@ -9,6 +9,7 @@ export function injectStore<E>(injected: E) {
       (acc, val: string) => ({ ...acc, [val]: container.get(injected[val]) }),
       {} as TInjectCfg<E>,
     );
+
     return class InjectWrap extends React.Component<Omit<GetProps<P>, E>> {
       public render() {
         return React.createElement(

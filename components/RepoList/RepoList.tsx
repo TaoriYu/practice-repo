@@ -15,6 +15,7 @@ export interface IRepoListProps {
 export class RepoList extends React.Component<IRepoListProps> {
   public render() {
     const { reposStore } = this.props;
+
     return (
       <div>
         <SearchContainer />

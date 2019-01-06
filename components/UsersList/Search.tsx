@@ -19,6 +19,7 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
 
   public render() {
     const { query } = this.state;
+
     return (
       <div>
         <form onSubmit={this.handleSubmit}>

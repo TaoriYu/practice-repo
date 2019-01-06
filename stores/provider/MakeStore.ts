@@ -16,6 +16,7 @@ export function makeStore(name: string | Newable<{}> | Abstract<{}> | symbol, op
     opts.singletonScope
       ? container.bind(name).to(constructor).inSingletonScope()
       : container.bind(name).to(constructor);
+
     return injectable()(constructor);
   };
 }

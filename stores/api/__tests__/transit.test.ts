@@ -25,6 +25,7 @@ class TransitTest extends Transit {
 
   public fill(data: any) {
     this.fillSelf(data);
+
     return this.asPlain();
   }
 }

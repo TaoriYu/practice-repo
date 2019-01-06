@@ -9,6 +9,7 @@ export class User extends Transit {
 
   public fromDTO(dto: UserDto) {
     this.fillSelf(dto);
+
     return this;
   }
 }
