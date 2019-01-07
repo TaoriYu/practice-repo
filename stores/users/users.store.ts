@@ -1,25 +1,26 @@
+import { inject } from 'inversify';
 import { action, observable } from 'mobx';
-import { Api } from '../api';
+import { Api, ApiFactory } from '../api';
 import { makeStore } from '../provider/MakeStore';
 import { UsersDto } from './dto';
 import { User } from './user';
 
 @makeStore(UsersStore)
-export class UsersStore extends Api<UsersDto> {
+export class UsersStore {
   @observable public users: User[] = [];
   @observable public totalCount: number = 0;
   @observable public query: string = '';
+  private getUsers: Api<UsersDto>;
+
+  constructor(@inject(Api) apiFactory: ApiFactory<UsersDto>) {
+    this.getUsers = apiFactory('defaultApi', 'GET', '/search/users', UsersDto);
+  }
 
   @action public async searchUsers() {
-    const { data } = await this.api.get('/search/users', {
-      params: {
-        q: this.query,
-        order: 'desc'
-      }
+    const { data: { items, totalCount } } = await this.getUsers.run({
+      params: { q: this.query, order: 'desc' },
     });
-
-    const { items, totalCount } = this.toDTO(UsersDto, data);
-    this.users = items.map((item) => new User().fromDTO(item));
+    this.users = items.map(User.create);
     this.totalCount = totalCount;
   }
 
