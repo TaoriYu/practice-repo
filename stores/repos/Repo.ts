@@ -1,8 +1,8 @@
+import { plainToClass } from 'class-transformer';
 import { observable } from 'mobx';
-import { Transit } from '../api/transit';
 import { RepoDto } from './dto';
 
-export class Repo extends Transit<RepoDto> {
+export class Repo {
   @observable public id: number = 0;
   @observable public name: string = '';
   @observable public fullName: string = '';
@@ -10,10 +10,8 @@ export class Repo extends Transit<RepoDto> {
   @observable public createdAt: Date = new Date();
   @observable public pushedAt: Date = new Date();
 
-  public fromDto(dto: RepoDto): this {
-    this.fillSelf(dto);
-
-    return this;
+  public static create(dto: RepoDto) {
+    return plainToClass(Repo, dto);
   }
 
   public get pushedAtDate() {
