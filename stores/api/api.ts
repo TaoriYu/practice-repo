@@ -10,7 +10,7 @@ import { container } from '../provider/container';
 
 export type ApiCfg = keyof IConfigFields['apis'] | AxiosInstance;
 export type TRequestMethod = 'GET' | 'PATCH' | 'PUT' | 'POST' | 'DELETE';
-export type ApiFactory = <D>(apicfg: ApiCfg, method: TRequestMethod, endpoint: string, dto: ClassType<D>) => Api<D>;
+export type TApiFactory = <D>(apicfg: ApiCfg, method: TRequestMethod, endpoint: string, dto: ClassType<D>) => Api<D>;
 
 /**
  * Class for working with http API, provide and instantiate axios instance from application

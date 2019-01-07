@@ -1,6 +1,6 @@
 import { inject } from 'inversify';
 import { action, observable } from 'mobx';
-import { Api, ApiFactory } from '../api';
+import { Api, TApiFactory } from '../api';
 import { makeStore } from '../provider/MakeStore';
 import { UsersDto } from './dto';
 import { User } from './user';
@@ -12,7 +12,7 @@ export class UsersStore {
   @observable public query: string = '';
   private getUsers: Api<UsersDto>;
 
-  constructor(@inject(Api) apiFactory: ApiFactory) {
+  constructor(@inject(Api) apiFactory: TApiFactory) {
     this.getUsers = apiFactory('defaultApi', 'GET', '/search/users', UsersDto);
   }
 
