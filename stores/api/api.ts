@@ -10,7 +10,7 @@ import { container } from '../provider/container';
 
 export type ApiCfg = keyof IConfigFields['apis'] | AxiosInstance;
 export type TRequestMethod = 'GET' | 'PATCH' | 'PUT' | 'POST' | 'DELETE';
-export type ApiFactory<D> = (apicfg: ApiCfg, method: TRequestMethod, endpoint: string, dto: ClassType<D>) => Api<D>;
+export type ApiFactory = <D>(apicfg: ApiCfg, method: TRequestMethod, endpoint: string, dto: ClassType<D>) => Api<D>;
 
 /**
  * Class for working with http API, provide and instantiate axios instance from application
@@ -86,7 +86,7 @@ export class Api<DtoClass> {
 const identifier = Symbol.for(Api.toString());
 container.bind(identifier).toConstructor(Api);
 container.bind(Api).toFactory((context) =>
-  (apicfg: keyof IConfigFields['apis'], method: TRequestMethod, endpoint: string, dto: ClassType<{}>) => {
+  <D>(apicfg: keyof IConfigFields['apis'], method: TRequestMethod, endpoint: string, dto: ClassType<D>) => {
     const apiConstructor = context.container.get<typeof Api>(identifier);
     /* creating instance with predefined data from factory, we can't change this parameters later */
     const apiConfiguration = axios.create({

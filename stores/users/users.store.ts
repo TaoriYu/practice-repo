@@ -12,7 +12,7 @@ export class UsersStore {
   @observable public query: string = '';
   private getUsers: Api<UsersDto>;
 
-  constructor(@inject(Api) apiFactory: ApiFactory<UsersDto>) {
+  constructor(@inject(Api) apiFactory: ApiFactory) {
     this.getUsers = apiFactory('defaultApi', 'GET', '/search/users', UsersDto);
   }
 
