@@ -15,6 +15,9 @@ export function UsersList({ usersStore }: IUsersListProps) {
   return (
     <div className={styles.style}>
       <SearchContainer />
+      { usersStore.totalCount !== usersStore.users.length &&
+        <div className={styles.subText}>{usersStore.users.length} of {usersStore.totalCount}</div>
+      }
       <List>
         {usersStore.users.map((user) => <UserItem user={user} key={user.login} />)}
       </List>
