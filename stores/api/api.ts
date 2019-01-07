@@ -50,7 +50,12 @@ export class Api<DtoClass> {
     this.api.interceptors.response.use(this.responseLogger);
   }
 
-  public run(config: OmitKeys<AxiosRequestConfig, 'transformResponse' | 'adapter'>) {
+  /**
+   * Runs configured request
+   * @param {OmitKeys<AxiosRequestConfig, "transformResponse" | "adapter" | "method" | "url" | "baseURL">} config
+   * @returns {AxiosPromise<DtoClass>}
+   */
+  public run(config: OmitKeys<AxiosRequestConfig, 'transformResponse' | 'adapter' | 'method' | 'url' | 'baseURL'>) {
     return this.api.request<DtoClass>(config);
   }
 
@@ -77,11 +82,13 @@ export class Api<DtoClass> {
   }
 }
 
+/* unique identifier for Api class, we can't inject Api itself but we need a way to inject it throw factory */
 const identifier = Symbol.for(Api.toString());
 container.bind(identifier).toConstructor(Api);
 container.bind(Api).toFactory((context) =>
   (apicfg: keyof IConfigFields['apis'], method: TRequestMethod, endpoint: string, dto: ClassType<{}>) => {
     const apiConstructor = context.container.get<typeof Api>(identifier);
+    /* creating instance with predefined data from factory, we can't change this parameters later */
     const apiConfiguration = axios.create({
       ...publicConfig('apis')[apicfg],
       method,
