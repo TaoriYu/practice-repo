@@ -11,7 +11,8 @@ import { container } from '../provider/container';
 export type ApiCfg = keyof IConfigFields['apis'] | AxiosInstance;
 export type TRequestMethod = 'GET' | 'PATCH' | 'PUT' | 'POST' | 'DELETE';
 export type TApiFactory = <D>(apicfg: ApiCfg, method: TRequestMethod, endpoint: string, dto: ClassType<D>) => Api<D>;
-
+/** dirty hack for reflect-metadata supports while injecting */
+export const TApiFactory = {};
 /**
  * Class for working with http API, provide and instantiate axios instance from application
  * configuration
