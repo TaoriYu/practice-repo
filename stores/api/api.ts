@@ -1,9 +1,16 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import { plainToClass } from 'class-transformer';
+import { ClassType } from 'class-transformer/ClassTransformer';
 import debug from 'debug';
-import { unmanaged } from 'inversify';
+import { injectable, unmanaged } from 'inversify';
 import { IConfigFields } from '../../config/types/IConfig';
 import { publicConfig } from '../../config/utils/publicConfig';
-import { Transit } from './transit';
+import { OmitKeys } from '../../types/helpers';
+import { container } from '../provider/container';
+
+export type ApiCfg = keyof IConfigFields['apis'] | AxiosInstance;
+export type TRequestMethod = 'GET' | 'PATCH' | 'PUT' | 'POST' | 'DELETE';
+export type ApiFactory<D> = (apicfg: ApiCfg, method: TRequestMethod, endpoint: string, dto: ClassType<D>) => Api<D>;
 
 /**
  * Class for working with http API, provide and instantiate axios instance from application
@@ -21,17 +28,16 @@ import { Transit } from './transit';
  *   }
  * }
  */
-export abstract class Api<DtoClass> extends Transit<DtoClass> {
-  protected readonly api: AxiosInstance;
+@injectable()
+export class Api<DtoClass> {
+  public readonly api: AxiosInstance;
   /**
    * run with: evn DEBUG=Api:* npm run dev  - to debug on the server
    * and use localStorage.debug = "Api:*"  - to debug on the client
    */
   private apiDebug = debug(`Api:${this.constructor.name}`);
 
-  public constructor(@unmanaged() keyOrInstance?: keyof IConfigFields['apis'] | AxiosInstance) {
-    super();
-
+  public constructor(@unmanaged() keyOrInstance?: ApiCfg) {
     if (typeof keyOrInstance === 'string' || typeof keyOrInstance === 'number') {
       this.api = axios.create({ ...publicConfig('apis')[keyOrInstance] });
     } else if (typeof keyOrInstance !== 'undefined') {
@@ -42,6 +48,10 @@ export abstract class Api<DtoClass> extends Transit<DtoClass> {
 
     this.api.interceptors.request.use(this.requestLogger);
     this.api.interceptors.response.use(this.responseLogger);
+  }
+
+  public run(config: OmitKeys<AxiosRequestConfig, 'transformResponse' | 'adapter'>) {
+    return this.api.request<DtoClass>(config);
   }
 
   private requestLogger = (config: AxiosRequestConfig) => {
@@ -66,3 +76,20 @@ export abstract class Api<DtoClass> extends Transit<DtoClass> {
     return response;
   }
 }
+
+const identifier = Symbol.for(Api.toString());
+container.bind(identifier).toConstructor(Api);
+container.bind(Api).toFactory((context) =>
+  (apicfg: keyof IConfigFields['apis'], method: TRequestMethod, endpoint: string, dto: ClassType<{}>) => {
+    const apiConstructor = context.container.get<typeof Api>(identifier);
+    const apiConfiguration = axios.create({
+      ...publicConfig('apis')[apicfg],
+      method,
+      url: endpoint,
+      transformResponse: [(rawData) =>
+        plainToClass(dto, JSON.parse(rawData), { strategy: 'excludeAll' })
+      ],
+    });
+
+    return new apiConstructor(apiConfiguration);
+  });
