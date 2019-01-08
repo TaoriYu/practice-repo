@@ -1,8 +1,12 @@
 import * as React from 'react';
 import * as styles from './layout.css';
 import Link from 'next/link';
-import DevTools from 'mobx-react-devtools';
 import { Container, Menu, Segment } from 'semantic-ui-react';
+
+const DevTools = process.env.NODE_ENV === 'development'
+  // tslint:disable-next-line:no-require-imports
+  ? require('mobx-react-devtools').default
+  : {};
 
 export interface ILayoutProps {
   children?: React.ReactNode;
