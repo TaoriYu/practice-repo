@@ -1,5 +1,5 @@
-import { IConfigFields } from '../../types/IConfig';
+import { IConfig, IConfigFields } from '../../types/IConfig';
 
 export interface IConfigurationAdapter {
-  get(): IConfigFields | Promise<IConfigFields> | undefined;
+  get(): IConfig<IConfigFields> | Promise<IConfig<IConfigFields>> | undefined;
 }

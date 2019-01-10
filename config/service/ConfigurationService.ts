@@ -1,5 +1,6 @@
 import { IConfig, IConfigFields } from '../types/IConfig';
 import { IConfigurationAdapter } from './adapters';
+import { merge } from 'lodash';
 
 type TAdapterPriorities = 0 | 1 | 2 | 3 | 4 | 5;
 
@@ -32,25 +33,24 @@ export class ConfigurationService implements IConfig<IConfigFields> {
       .sort((current, next) => current.priority < next.priority ? 1 : -1);
   }
 
-  private fetch() {
-    const adaptersIterator = this.iterate(this.adapters);
-    const move = () => {
-      const next = adaptersIterator.next();
-      if (!next.done) {
-        const { value: { adapter, priority } } = next;
-        const result = adapter.get();
-        if (result instanceof Promise) {
-          result.then((config) => {
-            if (config)
-          }).catch();
-        }
-        move();
+  public async update() {
+    const configurationToFill = this.getFullConfig();
+
+    for (const key in this.adapters) if (key in this.adapters) {
+      const result = await this.adapters[key].adapter.get();
+      if (result) {
+        merge(configurationToFill, result);
       }
-    };
+    }
   }
 
-  private iterate = function*<T>(array: T[]) {
-    let i = 0;
-    while (i < array.length) yield array[i++];
-  };
+  private getFullConfig(): IConfig<IConfigFields> {
+    return Object.assign(
+      {},
+      {
+        publicRuntimeConfig: this.publicRuntimeConfig,
+        serverRuntimeConfig: this.serverRuntimeConfig
+      }
+    );
+  }
 }
