@@ -1,8 +1,10 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { publicConfig } from '../../config/utils/publicConfig';
+import { ConfigurationService } from '../../config/service/ConfigurationService';
+import { container } from '../../stores/provider/container';
 
 export function axiosMockFactory(responseFactory: (config: AxiosRequestConfig) => Promise<AxiosResponse>) {
-  const { defaultApi } = publicConfig('apis');
+  const configService = container.get(ConfigurationService);
+  const { defaultApi } = configService.publicRuntimeConfig.apis;
 
   return axios.create({
     ...defaultApi,

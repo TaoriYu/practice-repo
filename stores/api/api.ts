@@ -3,8 +3,8 @@ import { plainToClass } from 'class-transformer';
 import { ClassType } from 'class-transformer/ClassTransformer';
 import debug from 'debug';
 import { injectable, unmanaged } from 'inversify';
+import { ConfigurationService } from '../../config/service/ConfigurationService';
 import { IConfigFields } from '../../config/types/IConfig';
-import { publicConfig } from '../../config/utils/publicConfig';
 import { OmitKeys } from '../../types/helpers';
 import { container } from '../provider/container';
 
@@ -38,14 +38,10 @@ export class Api<DtoClass> {
    */
   private apiDebug = debug(`Api:${this.constructor.name}`);
 
-  public constructor(@unmanaged() keyOrInstance?: ApiCfg) {
-    if (typeof keyOrInstance === 'string' || typeof keyOrInstance === 'number') {
-      this.api = axios.create({ ...publicConfig('apis')[keyOrInstance] });
-    } else if (typeof keyOrInstance !== 'undefined') {
-      this.api = keyOrInstance as AxiosInstance;
-    } else {
-      this.api = axios.create({ ...publicConfig('apis').defaultApi });
-    }
+  public constructor(
+    @unmanaged() keyOrInstance: AxiosInstance
+  ) {
+    this.api = keyOrInstance as AxiosInstance;
 
     this.api.interceptors.request.use(this.requestLogger);
     this.api.interceptors.response.use(this.responseLogger);
@@ -89,9 +85,10 @@ container.bind(identifier).toConstructor(Api);
 container.bind(Api).toFactory((context) =>
   <D>(apicfg: keyof IConfigFields['apis'], method: TRequestMethod, endpoint: string, dto: ClassType<D>) => {
     const apiConstructor = context.container.get<typeof Api>(identifier);
+    const configurationService = context.container.get(ConfigurationService);
     /* creating instance with predefined data from factory, we can't change this parameters later */
     const apiConfiguration = axios.create({
-      ...publicConfig('apis')[apicfg],
+      ...configurationService.publicRuntimeConfig.apis[apicfg],
       method,
       url: endpoint,
       transformResponse: [(rawData) =>

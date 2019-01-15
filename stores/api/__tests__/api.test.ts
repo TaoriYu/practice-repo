@@ -1,3 +1,4 @@
+import { AxiosResponse } from 'axios';
 import { axiosMockFactory } from '../../../utils/tests';
 import { Api } from '../api';
 
@@ -11,15 +12,20 @@ class ApiExample extends Api {
   }
 }
 
+const mockInstance = axiosMockFactory(
+  (config) =>
+    Promise.resolve<AxiosResponse>({ config, data: 'data', headers: [], status: 200, statusText: 'OK' }),
+);
+
 describe('Api class suite', () => {
 
   test('should produce instance without errors', () => {
-    expect(() => new ApiExample()).not.toThrow();
+    expect(() => new ApiExample(mockInstance)).not.toThrow();
   });
 
   test('should return data after request', async () => {
     expect.assertions(1);
-    const api = new ApiExample();
+    const api = new ApiExample(mockInstance);
     await expect(api.getFakeData()).resolves.toMatchObject({
       data: 'data',
       status: 200,
@@ -27,26 +33,4 @@ describe('Api class suite', () => {
       headers: [],
     });
   });
-
-  test('should create instance from api key', async () => {
-    const api = new ApiExample('defaultApi');
-    await expect(api.getFakeData()).resolves.toMatchObject({
-      config: {
-        url: 'http://test.url/data'
-      }
-    });
-  });
-
-  test('should create instance from existing axios instance', async () => {
-    const axios = axiosMockFactory((config) =>
-      Promise.resolve({ status: 200, data: 'data', config, headers: [], statusText: 'OK' })
-    );
-    const api = new ApiExample(axios);
-    await expect(api.getFakeData()).resolves.toMatchObject({
-      config: {
-        url: 'http://test.url/data'
-      }
-    });
-  });
-
 });

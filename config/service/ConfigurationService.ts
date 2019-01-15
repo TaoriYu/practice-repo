@@ -22,7 +22,7 @@ export class ConfigurationService implements ICompiledConfiguration<TCompiledCon
 
   @postConstruct()
   protected setConfigOnFirstLoad() {
-    if (!process.env.IS_SERVER) {
+    if (!process.env.IS_SERVER && typeof window !== 'undefined') {
       this._publicRuntimeConfig = window.__CONFIGURATION__;
     }
   }
