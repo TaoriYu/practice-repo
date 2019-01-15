@@ -1,21 +1,30 @@
 import { AxiosRequestConfig } from 'axios';
+import { LocalAdapter } from '../../config/service/adapters/LocalAdapter';
+import { ConfigurationService } from '../../config/service/ConfigurationService';
+import { container } from '../../stores/provider/container';
 
-jest.mock('../../config/dist/config.public.json', () => ({
-  publicRuntimeConfig: {
-    apis: {
-      defaultApi: {
-        baseURL: 'http://test.url/',
-        timeout: 200,
-        public: true,
-        adapter: (config: AxiosRequestConfig) => Promise.resolve({
-          data: 'data',
-          status: 200,
-          statusText: 'OK',
-          headers: [],
-          config,
-        })
-      }
-    }
-  },
-  serverRuntimeConfig: {},
-}));
+const configService = container.get(ConfigurationService);
+configService.registerAdapter(new LocalAdapter(), 0);
+configService.update();
+
+jest.mock('../../config/config.ts', () => {
+  return ({
+    publicRuntimeConfig: {
+      apis: {
+        defaultApi: {
+          baseURL: 'http://test.url/',
+          timeout: 200,
+          public: true,
+          adapter: (config: AxiosRequestConfig) => Promise.resolve({
+            data: 'data',
+            status: 200,
+            statusText: 'OK',
+            headers: [],
+            config,
+          }),
+        },
+      },
+    },
+    serverRuntimeConfig: {},
+  });
+});
