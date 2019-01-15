@@ -26,7 +26,6 @@ module.exports = (phase, { defaultConfig }) => {
 function customs() {
   const webpack = require('webpack');
   const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-  const compileConfig = require('./config/compileConfig');
   const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
   return {
@@ -56,7 +55,6 @@ function customs() {
           config.plugins.push(new BundleAnalyzerPlugin());
         }
       }
-      compileConfig();
       return config
     },
 
