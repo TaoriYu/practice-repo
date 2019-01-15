@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import * as React from 'react';
 import App, { Container } from 'next/app';
 import { enableRuntime } from '../stores/provider/injectServiceAdapter';

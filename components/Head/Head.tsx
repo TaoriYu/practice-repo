@@ -3,7 +3,6 @@ import NextHead from 'next/head';
 import { ConfigExposer } from './ConfigExposer';
 import { Links } from './Links';
 import { Meta, MetaOg, MetaTwitter } from './Meta';
-import 'reflect-metadata';
 
 interface IHeadProps {
   title?: string;
