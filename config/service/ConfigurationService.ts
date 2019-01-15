@@ -1,3 +1,4 @@
+import { injectable, postConstruct } from 'inversify';
 import { IConfig, IConfigFields } from '../types/IConfig';
 import { IConfigurationAdapter } from './adapters';
 import { merge } from 'lodash';
@@ -13,14 +14,17 @@ interface IAdapterHandler {
  * Service that expose access for application configuration, it could update configs from remote destination
  * by using connected adapters
  */
+@injectable()
 export class ConfigurationService implements IConfig<IConfigFields> {
-  public _publicRuntimeConfig: IConfigFields;
-  public _serverRuntimeConfig: IConfigFields;
+  private _publicRuntimeConfig: IConfigFields = {} as IConfigFields;
+  private _serverRuntimeConfig: IConfigFields = {} as IConfigFields;
   private adapters: IAdapterHandler[] = [];
 
-  public constructor({ publicRuntimeConfig, serverRuntimeConfig }: IConfig<IConfigFields>) {
-    this._serverRuntimeConfig = serverRuntimeConfig;
-    this._publicRuntimeConfig = publicRuntimeConfig;
+  @postConstruct()
+  protected setConfigOnFirstLoad() {
+    if (!process.env.IS_SERVER) {
+      this._publicRuntimeConfig = window.__CONFIGURATION__;
+    }
   }
 
   /**
@@ -64,6 +68,9 @@ export class ConfigurationService implements IConfig<IConfigFields> {
         merge(configurationToFill, result);
       }
     }
+
+    this._publicRuntimeConfig = configurationToFill.publicRuntimeConfig;
+    this._serverRuntimeConfig = configurationToFill.serverRuntimeConfig;
   }
 
   private getFullConfig(): IConfig<IConfigFields> {
