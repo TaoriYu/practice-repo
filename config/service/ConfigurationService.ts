@@ -1,5 +1,5 @@
 import { injectable, postConstruct } from 'inversify';
-import { IConfig, IConfigFields } from '../types/IConfig';
+import { ICompiledConfiguration, TCompiledConfigFields } from '../types/IConfig';
 import { IConfigurationAdapter } from './adapters';
 import { merge } from 'lodash';
 
@@ -15,9 +15,9 @@ interface IAdapterHandler {
  * by using connected adapters
  */
 @injectable()
-export class ConfigurationService implements IConfig<IConfigFields> {
-  private _publicRuntimeConfig: IConfigFields = {} as IConfigFields;
-  private _serverRuntimeConfig: IConfigFields = {} as IConfigFields;
+export class ConfigurationService implements ICompiledConfiguration<TCompiledConfigFields> {
+  private _publicRuntimeConfig: TCompiledConfigFields = {} as TCompiledConfigFields;
+  private _serverRuntimeConfig: TCompiledConfigFields = {} as TCompiledConfigFields;
   private adapters: IAdapterHandler[] = [];
 
   @postConstruct()
@@ -31,7 +31,7 @@ export class ConfigurationService implements IConfig<IConfigFields> {
    * Returns public configuration you can access it both on server and client.
    * @returns {IConfigFields}
    */
-  public get publicRuntimeConfig(): IConfigFields {
+  public get publicRuntimeConfig(): TCompiledConfigFields {
     return this._publicRuntimeConfig;
   }
 
@@ -39,8 +39,8 @@ export class ConfigurationService implements IConfig<IConfigFields> {
    * Returns private server configuration, you can access it only from server, on client it will return empty object
    * @returns {IConfigFields}
    */
-  public get serverRuntimeConfig(): IConfigFields {
-    return process.env.IS_SERVER ? this._serverRuntimeConfig : {} as IConfigFields;
+  public get serverRuntimeConfig(): TCompiledConfigFields {
+    return process.env.IS_SERVER ? this._serverRuntimeConfig : {} as TCompiledConfigFields;
   }
 
   /**
@@ -73,7 +73,7 @@ export class ConfigurationService implements IConfig<IConfigFields> {
     this._serverRuntimeConfig = configurationToFill.serverRuntimeConfig;
   }
 
-  private getFullConfig(): IConfig<IConfigFields> {
+  private getFullConfig(): ICompiledConfiguration<TCompiledConfigFields> {
     return Object.assign(
       {},
       {

@@ -4,12 +4,12 @@ export interface IConfigGroup<T extends IWithPublic = IWithPublic> {
   [N: string]: IWithEnv<T>;
 }
 
-export interface IBuildedConfigGroup<T extends IWithPublic = IWithPublic> {
+export interface ICompiledConfigGroup<T extends IWithPublic = IWithPublic> {
   [N: string]: T;
 }
 
 export type TBuildedConfigFields = {
-  [N in keyof IConfigFields]: IConfigFields[N] extends IConfigGroup<infer T> ? IBuildedConfigGroup<T> : IConfigFields[N]
+  [N in keyof IConfigFields]: IConfigFields[N] extends IConfigGroup<infer T> ? ICompiledConfigGroup<T> : IConfigFields[N]
 };
 
 export interface IWithPublic {
@@ -33,3 +33,8 @@ export type IWithRequiredEnv<T extends IWithPublic = IWithPublic> = {
 export type TMappedFields<T, E> = { [N in keyof T]: E };
 
 export type TReturnConfigGroup<T = unknown> = TMappedFields<T, IConfigGroup>;
+export type TReturnCompiledConfigGroup<T = unknown> = TMappedFields<T, ICompiledConfigGroup>;
+
+export type TMakeCompiled<T extends TReturnConfigGroup<T>> = {
+  [N in keyof T]: T[N] extends IConfigGroup<infer E> ? ICompiledConfigGroup<E> : T[N];
+};

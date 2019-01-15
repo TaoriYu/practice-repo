@@ -1,5 +1,5 @@
-import { IConfig } from '../types/IConfig';
-import { IConfigGroup, OptionalEnv, RequiredEnv, TReturnConfigGroup } from '../types/internals';
+import { ICompiledConfiguration, IConfig } from '../types/IConfig';
+import { IConfigGroup, OptionalEnv, RequiredEnv, TMakeCompiled, TReturnConfigGroup } from '../types/internals';
 
 /**
  * Преобразует конфигурацию таким образом, что-бы поля содержащие ключ public помещались в
@@ -32,8 +32,9 @@ export function transform<Fields extends TReturnConfigGroup<Fields>, T extends I
   cfg: IConfig<Fields>,
   cfgPart: T,
   cfgPartName: keyof Fields
-) {
+): ICompiledConfiguration<TMakeCompiled<Fields>> {
   const env = (process.env.NODE_ENV || 'dev') as RequiredEnv | OptionalEnv;
+
   return Object.keys(cfgPart).reduce(
     (acc, val: keyof T) => {
       if (!acc.publicRuntimeConfig[cfgPartName] || !acc.serverRuntimeConfig[cfgPartName]) {
@@ -52,6 +53,6 @@ export function transform<Fields extends TReturnConfigGroup<Fields>, T extends I
 
       return acc;
     },
-    cfg,
+    cfg as unknown as ICompiledConfiguration<TMakeCompiled<Fields>>,
   );
 }

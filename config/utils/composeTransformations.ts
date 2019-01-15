@@ -1,5 +1,5 @@
-import { IConfig } from '../types/IConfig';
-import { TReturnConfigGroup } from '../types/internals';
+import { ICompiledConfiguration, IConfig } from '../types/IConfig';
+import { TMakeCompiled, TReturnConfigGroup } from '../types/internals';
 import { transform } from './transformConfig';
 
 /**
@@ -19,6 +19,7 @@ import { transform } from './transformConfig';
 export function composeTransformations<Fields extends TReturnConfigGroup<Fields>, T extends keyof Fields>(
   initialConfig: IConfig<Fields>,
   ...rest: Array<[Fields[T], T]>
-): IConfig<Fields> {
-  return rest.reduce((acc, [obj, key]) => transform(acc, obj, key), initialConfig);
+): ICompiledConfiguration<TMakeCompiled<Fields>> {
+  // set any cause of typecasting. We're mutate initialConfig object, because ot's much faster to implement
+  return rest.reduce((acc, [obj, key]) => (transform(acc, obj, key as keyof Fields)), initialConfig as any);
 }

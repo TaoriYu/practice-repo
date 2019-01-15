@@ -11,7 +11,7 @@ const defaultConfig: IConfig<IConfigFields> = {
   },
 };
 
-export const appConfig: IConfig<IConfigFields> = composeTransformations(
+export const appConfig = composeTransformations(
   defaultConfig,
   [apis, 'apis'],
 );
