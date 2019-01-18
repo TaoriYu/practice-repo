@@ -4,17 +4,24 @@ import { container } from './container';
 
 export function injectStore<E>(injected: E) {
   return <P extends React.ComponentType<Matching<TInjectCfg<E>, GetProps<P>>>>(Component: P) => {
-    const injProps: TInjectCfg<E> = Object.keys(injected).reduce(
+    const injProps: () => TInjectCfg<E> = () => Object.keys(injected).reduce(
       // @ts-ignore
       (acc, val: string) => ({ ...acc, [val]: container.get(injected[val]) }),
       {} as TInjectCfg<E>,
     );
 
     return class InjectWrap extends React.Component<Omit<GetProps<P>, E>> {
+      private injProps: TInjectCfg<E>;
+
+      public constructor(props: Omit<GetProps<P>, E>) {
+        super(props);
+        this.injProps = injProps();
+      }
+
       public render() {
         return React.createElement(
           Component as any,
-          { ...this.props, ...injProps },
+          { ...this.props, ...this.injProps },
           this.props.children,
         );
       }

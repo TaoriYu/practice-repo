@@ -22,7 +22,7 @@ export class ReposStore {
         sort: 'stars',
         order: 'desc',
         per_page: 10,
-        page: 1
+        page: 1,
       },
     });
 
