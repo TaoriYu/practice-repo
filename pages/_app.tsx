@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import * as React from 'react';
 import App, { Container } from 'next/app';
 import { RuntimeSettings } from '../core/config';
-import { container } from '../core/provider/container';
+import { container } from '../di/container';
 
 // tslint:disable-next-line:no-default-export
 export default class CustomApp extends App {

@@ -1,16 +1,13 @@
-import { ConfigurationService } from './ConfigurationService';
-import { provideSingleton } from '../../provider/provideSingleton';
+import { provideSingleton } from '../../provider';
 import debug from 'debug';
+import { ConfigurationService } from './ConfigurationService';
 
 @provideSingleton(RuntimeSettings)
 export class RuntimeSettings {
   public isRuntimeEnabled = false;
+  public service: ConfigurationService<{}> = new ConfigurationService();
   private log = debug('RuntimeSettings');
   private mutex = false;
-
-  constructor(
-    private service: ConfigurationService<{}>
-  ) {}
 
   public async enableRuntime() {
     if (!process.env.IS_SERVER) { return; }

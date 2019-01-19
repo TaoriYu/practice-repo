@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { AppConfigurationService } from '../../config';
-import { container } from '../../core/provider/container';
+import { container } from '../../di/container';
 
 const defaultAxiosResponse200: OmitKeys<AxiosResponse, 'config'> = {
   statusText: 'OK',

@@ -1,4 +1,4 @@
 export { ConfigurationService } from './service/ConfigurationService';
 export * from './types/internals';
-export * from './service/runtimeSettings';
+export { RuntimeSettings } from './service/RuntimeSettings';
 export { composeTransformations } from './utils/composeTransformations';

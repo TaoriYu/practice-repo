@@ -1,13 +1,13 @@
 import { AxiosRequestConfig } from 'axios';
 import { LocalAdapter } from '../../config/adapters/LocalAdapter';
 import { AppConfigurationService } from '../../config';
-import { container } from '../../core/provider/container';
+import { container } from '../../di/container';
 
 const configService = container.get(AppConfigurationService);
 configService.registerAdapter(new LocalAdapter(), 0);
 configService.update();
 
-jest.mock('../../config/config.ts', () => {
+jest.mock('../../config/appConfig.ts', () => {
   return ({
     appConfig: {
       publicRuntimeConfig: {
