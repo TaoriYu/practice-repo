@@ -12,7 +12,7 @@ export class ReposStore {
   @observable public totalCount: number = 0;
   private getRepos: Api<SearchResults>;
 
-  constructor(@inject(Api) apiFactory: TApiFactory ) {
+  constructor(@inject(TApiFactory) apiFactory: TApiFactory ) {
     this.getRepos = apiFactory('defaultApi', 'GET', 'search/repositories', SearchResults);
   }
 
