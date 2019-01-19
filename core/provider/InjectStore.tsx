@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Omit } from '../../types/helpers';
 import { container } from './container';
 
 export function injectStore<E>(injected: E) {

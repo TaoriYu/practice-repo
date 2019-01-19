@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, Input } from 'semantic-ui-react';
-import { injectStore } from '../../stores/provider/InjectStore';
+import { injectStore } from '../../core/provider/InjectStore';
 import { ReposStore } from '../../stores/repos';
 
 export interface ISearchProps {

@@ -1,5 +1,12 @@
-import { ICompiledConfiguration, IConfig } from '../types/IConfig';
-import { IConfigGroup, OptionalEnv, RequiredEnv, TMakeCompiled, TReturnConfigGroup } from '../types/internals';
+import {
+  ICompiledConfiguration,
+  IConfig,
+  IConfigGroup,
+  OptionalEnv,
+  RequiredEnv,
+  TMakeCompiled,
+  TReturnConfigGroup,
+} from '../types/internals';
 
 /**
  * Преобразует конфигурацию таким образом, что-бы поля содержащие ключ public помещались в

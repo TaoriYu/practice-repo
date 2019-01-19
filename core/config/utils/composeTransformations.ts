@@ -1,5 +1,4 @@
-import { ICompiledConfiguration, IConfig } from '../types/IConfig';
-import { TMakeCompiled, TReturnConfigGroup } from '../types/internals';
+import { ICompiledConfiguration, IConfig, TMakeCompiled, TReturnConfigGroup } from '../types/internals';
 import { transform } from './transformConfig';
 
 /**

@@ -3,7 +3,7 @@ module.exports = {
   testEnvironment: 'node',
   setupFiles: [
     './utils/tests/polyfills.ts',
-    './stores/provider/container.ts',
+    './di/container.ts',
     './utils/tests/configMock.ts'
   ],
   globals: {

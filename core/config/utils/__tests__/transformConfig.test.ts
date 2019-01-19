@@ -1,5 +1,5 @@
-import { IApi, IConfig } from '../../types/IConfig';
-import { IConfigGroup } from '../../types/internals';
+import { IApi } from '../../../../config/IConfig';
+import { IConfig, IConfigGroup } from '../../types/internals';
 import { transform } from '../transformConfig';
 
 describe('configuration transform testing', () => {

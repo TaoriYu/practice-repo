@@ -23,6 +23,3 @@ yarn-error.log*
 /static/semantic.css
 /static/semantic.min.css
 /static/themes
-
-# Configuration files on js
-/config/dist

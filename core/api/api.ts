@@ -1,18 +1,7 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { plainToClass } from 'class-transformer';
-import { ClassType } from 'class-transformer/ClassTransformer';
+import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import debug from 'debug';
 import { injectable, unmanaged } from 'inversify';
-import { ConfigurationService } from '../../config/service/ConfigurationService';
-import { IConfigFields } from '../../config/types/IConfig';
-import { OmitKeys } from '../../types/helpers';
-import { container } from '../provider/container';
 
-export type ApiCfg = keyof IConfigFields['apis'] | AxiosInstance;
-export type TRequestMethod = 'GET' | 'PATCH' | 'PUT' | 'POST' | 'DELETE';
-export type TApiFactory = <D>(apicfg: ApiCfg, method: TRequestMethod, endpoint: string, dto: ClassType<D>) => Api<D>;
-/** dirty hack for reflect-metadata supports while injecting */
-export const TApiFactory = {};
 /**
  * Class for working with http API, provide and instantiate axios instance from application
  * configuration
@@ -78,23 +67,3 @@ export class Api<DtoClass> {
     return response;
   }
 }
-
-/* unique identifier for Api class, we can't inject Api itself but we need a way to inject it throw factory */
-const identifier = Symbol.for(Api.toString());
-container.bind(identifier).toConstructor(Api);
-container.bind(Api).toFactory((context) =>
-  <D>(apicfg: keyof IConfigFields['apis'], method: TRequestMethod, endpoint: string, dto: ClassType<D>) => {
-    const apiConstructor = context.container.get<typeof Api>(identifier);
-    const configurationService = context.container.get(ConfigurationService);
-    /* creating instance with predefined data from factory, we can't change this parameters later */
-    const apiConfiguration = axios.create({
-      ...configurationService.publicRuntimeConfig.apis[apicfg],
-      method,
-      url: endpoint,
-      transformResponse: [(rawData) =>
-        plainToClass(dto, JSON.parse(rawData), { strategy: 'excludeAll' })
-      ],
-    });
-
-    return new apiConstructor(apiConfiguration);
-  });

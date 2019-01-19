@@ -64,9 +64,9 @@
     "types",
     "utils",
     "stores",
-    "config"
+    "core/config"
   ],
   "exclude": [
-    "utils/build"
+    "core/build"
   ]
 }

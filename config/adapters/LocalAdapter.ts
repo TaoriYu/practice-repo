@@ -1,5 +1,6 @@
-import { IConfig, IConfigFields } from '../../types/IConfig';
-import { IConfigurationAdapter } from './interfaces';
+import { IConfig } from '../../core/config';
+import { IConfigurationAdapter } from '../../core/config/service/adapters';
+import { IConfigFields } from '../IConfig';
 
 /**
  * Simple, mostly example adapter that might return constant data;

@@ -1,4 +1,14 @@
-import { IConfigFields } from './IConfig';
+export interface IConfig<Fields extends TReturnConfigGroup<Fields>> {
+  serverRuntimeConfig: Fields;
+  publicRuntimeConfig: Fields;
+}
+
+export interface ICompiledConfiguration<Fields extends TReturnCompiledConfigGroup<Fields>> {
+  serverRuntimeConfig: Fields;
+  publicRuntimeConfig: Fields;
+}
+
+export type TCompiledConfigFields<D extends TReturnConfigGroup<D>> = TMakeCompiled<D>;
 
 export interface IConfigGroup<T extends IWithPublic = IWithPublic> {
   [N: string]: IWithEnv<T>;
@@ -7,10 +17,6 @@ export interface IConfigGroup<T extends IWithPublic = IWithPublic> {
 export interface ICompiledConfigGroup<T extends IWithPublic = IWithPublic> {
   [N: string]: T;
 }
-
-export type TBuildedConfigFields = {
-  [N in keyof IConfigFields]: IConfigFields[N] extends IConfigGroup<infer T> ? ICompiledConfigGroup<T> : IConfigFields[N]
-};
 
 export interface IWithPublic {
   public: boolean;

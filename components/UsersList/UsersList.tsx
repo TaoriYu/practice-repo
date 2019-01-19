@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react';
 import * as React from 'react';
 import { List } from 'semantic-ui-react';
-import { injectStore } from '../../stores/provider/InjectStore';
+import { injectStore } from '../../core/provider/InjectStore';
 import { UsersStore } from '../../stores/users';
 import { SearchContainer } from './Search';
 import { UserItem } from './UserItem';

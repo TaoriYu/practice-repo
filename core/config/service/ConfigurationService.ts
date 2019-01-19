@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { injectable, postConstruct } from 'inversify';
-import { ICompiledConfiguration, TCompiledConfigFields } from '../types/IConfig';
+import { ICompiledConfiguration, TCompiledConfigFields, TReturnConfigGroup } from '../types/internals';
 import { IConfigurationAdapter } from './adapters';
 import { merge } from 'lodash';
 
@@ -16,9 +16,9 @@ interface IAdapterHandler {
  * by using connected adapters
  */
 @injectable()
-export class ConfigurationService implements ICompiledConfiguration<TCompiledConfigFields> {
-  private _publicRuntimeConfig: TCompiledConfigFields = {} as TCompiledConfigFields;
-  private _serverRuntimeConfig: TCompiledConfigFields = {} as TCompiledConfigFields;
+export class ConfigurationService<D extends TReturnConfigGroup<D>> implements ICompiledConfiguration<TCompiledConfigFields<D>> {
+  private _publicRuntimeConfig: TCompiledConfigFields<D> = {} as TCompiledConfigFields<D>;
+  private _serverRuntimeConfig: TCompiledConfigFields<D> = {} as TCompiledConfigFields<D>;
   private adapters: IAdapterHandler[] = [];
 
   @postConstruct()
@@ -32,7 +32,7 @@ export class ConfigurationService implements ICompiledConfiguration<TCompiledCon
    * Returns public configuration you can access it both on server and client.
    * @returns {IConfigFields}
    */
-  public get publicRuntimeConfig(): TCompiledConfigFields {
+  public get publicRuntimeConfig(): TCompiledConfigFields<D> {
     return this._publicRuntimeConfig;
   }
 
@@ -40,8 +40,8 @@ export class ConfigurationService implements ICompiledConfiguration<TCompiledCon
    * Returns private server configuration, you can access it only from server, on client it will return empty object
    * @returns {IConfigFields}
    */
-  public get serverRuntimeConfig(): TCompiledConfigFields {
-    return process.env.IS_SERVER ? this._serverRuntimeConfig : {} as TCompiledConfigFields;
+  public get serverRuntimeConfig(): TCompiledConfigFields<D> {
+    return process.env.IS_SERVER ? this._serverRuntimeConfig : {} as TCompiledConfigFields<D>;
   }
 
   /**
@@ -74,7 +74,7 @@ export class ConfigurationService implements ICompiledConfiguration<TCompiledCon
     this._serverRuntimeConfig = configurationToFill.serverRuntimeConfig;
   }
 
-  private getFullConfig(): ICompiledConfiguration<TCompiledConfigFields> {
+  private getFullConfig(): ICompiledConfiguration<TCompiledConfigFields<D>> {
     return Object.assign(
       {},
       {

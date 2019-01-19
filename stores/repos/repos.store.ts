@@ -1,7 +1,8 @@
 import { inject } from 'inversify';
 import { observable } from 'mobx';
-import { Api, TApiFactory } from '../api';
-import { makeStore } from '../provider/MakeStore';
+import { Api } from '../../core/api';
+import { makeStore } from '../../core/provider';
+import { TApiFactory } from '../../di/bindings/bindApiService';
 import { SearchResults } from './dto';
 import { Repo } from './Repo';
 

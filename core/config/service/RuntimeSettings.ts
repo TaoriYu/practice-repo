@@ -1,5 +1,5 @@
-import { ConfigurationService } from '../../config/service/ConfigurationService';
-import { provideSingleton } from './provideSingleton';
+import { ConfigurationService } from './ConfigurationService';
+import { provideSingleton } from '../../provider/provideSingleton';
 import debug from 'debug';
 
 @provideSingleton(RuntimeSettings)
@@ -9,7 +9,7 @@ export class RuntimeSettings {
   private mutex = false;
 
   constructor(
-    private service: ConfigurationService
+    private service: ConfigurationService<{}>
   ) {}
 
   public async enableRuntime() {

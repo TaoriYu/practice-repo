@@ -1,7 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { container } from '../../stores/provider/container';
-import { OmitKeys } from '../../types/helpers';
-import { ConfigurationService } from '../../config/service/ConfigurationService';
+import { AppConfigurationService } from '../../config';
+import { container } from '../../core/provider/container';
 
 const defaultAxiosResponse200: OmitKeys<AxiosResponse, 'config'> = {
   statusText: 'OK',
@@ -21,7 +20,7 @@ export function axiosMockFactory<D extends object = {}>(
   responseFactory: ((config: AxiosRequestConfig) => Promise<AxiosResponse<D>>) | D | OmitKeys<AxiosResponse<D>, 'config'>,
   type: boolean = true,
 ): AxiosInstance {
-  const configService = container.get(ConfigurationService);
+  const configService = container.get(AppConfigurationService);
   const { defaultApi } = configService.publicRuntimeConfig.apis;
 
   let adapter: ((config: AxiosRequestConfig) => Promise<AxiosResponse<D>>);

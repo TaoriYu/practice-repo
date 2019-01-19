@@ -1,9 +1,9 @@
 import { AxiosRequestConfig } from 'axios';
-import { LocalAdapter } from '../../config/service/adapters/LocalAdapter';
-import { ConfigurationService } from '../../config/service/ConfigurationService';
-import { container } from '../../stores/provider/container';
+import { LocalAdapter } from '../../config/adapters/LocalAdapter';
+import { AppConfigurationService } from '../../config';
+import { container } from '../../core/provider/container';
 
-const configService = container.get(ConfigurationService);
+const configService = container.get(AppConfigurationService);
 configService.registerAdapter(new LocalAdapter(), 0);
 configService.update();
 
