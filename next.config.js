@@ -10,7 +10,7 @@ module.exports = (phase, { defaultConfig }) => {
     return {};
   }
 
-  const withTypescript = require('./utils/build/withTypescript');
+  const withTypescript = require('./core/build/withTypescript');
   const withCSS = require('@zeit/next-css');
 
   return withTypescript(withCSS({

@@ -1,5 +1,5 @@
-import { IApi } from '../types/IConfig';
-import { IWithEnv } from '../types/internals';
+import { IApi } from '../IConfig';
+import { IWithEnv } from '../../core/config';
 
 export const defaultApi: IWithEnv<IApi> = {
   dev: {

@@ -1,5 +1,5 @@
 .idea
-_templates
+core/_templates
 semantic/
 .cz-config.js
 .gitignore

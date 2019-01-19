@@ -3,7 +3,6 @@ module.exports = {
     'body-leading-blank': [2, 'always'],
     'footer-leading-blank': [2, 'always'],
     'header-max-length': [2, 'always', 72],
-    'scope-case': [1, 'always', 'lower-case'],
     'subject-case': [
       2,
       'never',
@@ -27,6 +26,22 @@ module.exports = {
         'revert',
         'style',
         'test'
+      ]
+    ],
+    'scope-case': [2, 'always', 'lower-case'],
+    'scope-enum': [
+      2,
+      'always',
+      [
+        'components',
+        'pages',
+        'tests',
+        'product',
+        'configs',
+        'core',
+        'stores',
+        'hygen',
+        'code-utils'
       ]
     ]
   }

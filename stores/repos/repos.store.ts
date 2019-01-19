@@ -1,7 +1,8 @@
 import { inject } from 'inversify';
 import { observable } from 'mobx';
-import { Api, TApiFactory } from '../api';
-import { makeStore } from '../provider/MakeStore';
+import { Api } from '../../core/api';
+import { makeStore } from '../../core/provider';
+import { TApiFactory } from '../../di/bindings/bindApiService';
 import { SearchResults } from './dto';
 import { Repo } from './Repo';
 
@@ -11,7 +12,7 @@ export class ReposStore {
   @observable public totalCount: number = 0;
   private getRepos: Api<SearchResults>;
 
-  constructor(@inject(Api) apiFactory: TApiFactory ) {
+  constructor(@inject(TApiFactory) apiFactory: TApiFactory ) {
     this.getRepos = apiFactory('defaultApi', 'GET', 'search/repositories', SearchResults);
   }
 

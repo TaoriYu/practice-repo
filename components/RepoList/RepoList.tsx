@@ -2,7 +2,7 @@ import * as React from 'react';
 import { List } from 'semantic-ui-react';
 import * as styles from './repoList.css';
 import { observer } from 'mobx-react';
-import { injectStore } from '../../stores/provider/InjectStore';
+import { injectStore } from '../../core/provider/InjectStore';
 import { ReposStore } from '../../stores/repos';
 import { ListItem } from './ListItem';
 import { SearchContainer } from './Search';

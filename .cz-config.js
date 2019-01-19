@@ -35,20 +35,19 @@ module.exports = {
     { name: "tests" },
     { name: "product" },
     { name: "configs" },
+    { name: "core" },
     { name: "stores" },
-    { name: "hygen" }
   ],
 
   // Возможность задать спец ОБЛАСТЬ для определенного типа коммита (пример для 'fix')
-  /*
   scopeOverrides: {
-    fix: [
-      {name: 'style'},
-      {name: 'e2eTest'},
-      {name: 'unitTest'}
+    build: [
+      {name: 'hygen'},
+      {name: "configs"},
+      {name: "code-utils"},
+      { name: "core" },
     ]
   },
-  */
 
   // Поменяем дефолтные вопросы
   messages: {
