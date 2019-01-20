@@ -9,6 +9,10 @@ class ApiExample extends Api<{}> {
   public getFakeData() {
     return this.api.get('data');
   }
+
+  public requestData() {
+    return this.run({});
+  }
 }
 
 describe('Api class suite', () => {
@@ -26,6 +30,22 @@ describe('Api class suite', () => {
       headers: []
     }));
     await expect(api.getFakeData()).resolves.toMatchObject({
+      data: 'data',
+      status: 200,
+      statusText: 'OK',
+      headers: [],
+    });
+  });
+
+  test('should return data run bootstrapped request', async () => {
+    expect.assertions(1);
+    const api = new ApiExample(axiosMockFactory({
+      data: 'data',
+      status: 200,
+      statusText: 'OK',
+      headers: []
+    }));
+    await expect(api.requestData()).resolves.toMatchObject({
       data: 'data',
       status: 200,
       statusText: 'OK',
