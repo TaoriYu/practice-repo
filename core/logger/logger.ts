@@ -1,18 +1,56 @@
 /* tslint:disable:no-console */
 import debug from 'debug';
 
+enum ELogLevel {
+  /* all logs, maximum verbosity */
+  debug = 'debug',
+  /* all logs exclude debug logs */
+  info = 'info',
+  /* all logs exclude debug and info logs */
+  warn = 'warn',
+  /* only error logs */
+  error = 'error',
+  /* no logs */
+  silent = 'silent',
+}
+
 export class Logger {
+  /* kind of reexporting, exposing ELogLevel enumeration */
+  public static logLevel = ELogLevel;
+
   public readonly info: debug.IDebugger;
   public readonly warn: debug.IDebugger;
   public readonly debug: debug.IDebugger;
   public readonly error: debug.IDebugger;
 
+  /**
+   * Sets the level of logger verbosity.
+   * @see ELogLevel
+   * @param {ELogLevel} level
+   */
+  public static setLogLevel(level?: ELogLevel) {
+    switch (level) {
+      case ELogLevel.debug:
+        return debug.enable('App:*');
+      case ELogLevel.info:
+        return debug.enable('App:(info|warn|error):*');
+      case ELogLevel.warn:
+        return debug.enable('App:(warn|error):*');
+      case ELogLevel.error:
+        return debug.enable('App:error:*');
+      case ELogLevel.silent:
+        return debug.disable();
+      default:
+        return debug.enable('App:*');
+    }
+  }
+
   public constructor(namespace: string) {
-    const appDebug = debug(`App:`);
+    const appDebug = debug(`App`);
     appDebug.log = console.log.bind(console);
-    this.debug = appDebug.extend(`debug:${namespace}`);
-    this.info = appDebug.extend(`info:${namespace}`);
-    this.warn = appDebug.extend(`warn:${namespace}`);
+    this.debug = appDebug.extend('debug').extend(`${namespace}`);
+    this.info = appDebug.extend('info').extend(`${namespace}`);
+    this.warn = appDebug.extend('warn').extend(`${namespace}`);
     this.error = debug(`App:error:${namespace}`);
   }
 }
