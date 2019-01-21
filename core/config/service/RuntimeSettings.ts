@@ -1,20 +1,20 @@
+import { log } from '../../logger';
 import { provideSingleton } from '../../provider';
-import debug from 'debug';
 import { ConfigurationService } from './ConfigurationService';
 
 @provideSingleton(RuntimeSettings)
 export class RuntimeSettings {
   public isRuntimeEnabled = false;
   public service: ConfigurationService<{}> = new ConfigurationService();
-  private log = debug('RuntimeSettings');
+  private log = log('RuntimeSettings');
   private mutex = false;
 
   public async enableRuntime() {
     if (!process.env.IS_SERVER) { return; }
     this.check();
-    this.log('runtime enabled');
+    this.log.info('runtime enabled');
     await this.service.update();
-    this.log('first initial update finished');
+    this.log.debug('first initial update finished');
 
     return this.runtimeSettings();
   }
@@ -33,7 +33,7 @@ export class RuntimeSettings {
           this.mutex = true;
           await this.updateService();
         } else {
-          this.log(`cannot update configs because previous update cycle is'not finished`);
+          this.log.warn(`cannot update configs because previous update cycle is'not finished`);
         }
       },
       10000,
@@ -43,9 +43,9 @@ export class RuntimeSettings {
   }
 
   private async updateService() {
-    this.log('start update on all adapters');
+    this.log.debug('start update on all adapters');
     await this.service.update();
-    this.log('update finished');
+    this.log.debug('update finished');
     this.mutex = false;
   }
 }

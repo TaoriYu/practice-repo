@@ -18,10 +18,10 @@ export class Logger {
   /* kind of reexporting, exposing ELogLevel enumeration */
   public static logLevel = ELogLevel;
 
-  public readonly info: debug.IDebugger;
-  public readonly warn: debug.IDebugger;
-  public readonly debug: debug.IDebugger;
-  public readonly error: debug.IDebugger;
+  public readonly _info: debug.IDebugger;
+  public readonly _warn: debug.IDebugger;
+  public readonly _debug: debug.IDebugger;
+  public readonly _error: debug.IDebugger;
 
   /**
    * Sets the level of logger verbosity.
@@ -48,10 +48,75 @@ export class Logger {
   public constructor(namespace: string) {
     const appDebug = debug(`App`);
     appDebug.log = console.log.bind(console);
-    this.debug = appDebug.extend('debug').extend(`${namespace}`);
-    this.info = appDebug.extend('info').extend(`${namespace}`);
-    this.warn = appDebug.extend('warn').extend(`${namespace}`);
-    this.error = debug(`App:error:${namespace}`);
+    this._debug = appDebug.extend('debug').extend(`${namespace}`);
+    this._info = appDebug.extend('info').extend(`${namespace}`);
+    this._warn = appDebug.extend('warn').extend(`${namespace}`);
+    this._error = debug(`App:error:${namespace}`);
+  }
+
+  public info(message: string, ...args: any[]) {
+    this._info(message, ...args);
+  }
+
+  public warn(message: string, ...args: any[]) {
+    this._warn(message, ...args);
+  }
+
+  public debug(message: string, ...args: any[]) {
+    (new SendToElastic()).debug(message, ...args);
+    this._debug(message, ...args);
+  }
+
+  public error(message: string, ...args: any[]) {
+    this._error(message, ...args);
+  }
+}
+
+interface ILoggerTransport {
+  debug(message: string, ...args: any[]): void;
+  info(message: string, ...args: any[]): void;
+  warn(message: string, ...args: any[]): void;
+  error(message: string, ...args: any[]): void;
+}
+
+class SendToElastic implements ILoggerTransport {
+  public debug(message: string, ...args: any[]): void {
+    this.parse('debug', message, args);
+  }
+
+  public error(message: string, ...args: any[]): void {
+    this.parse('error', message, args);
+  }
+
+  public info(message: string, ...args: any[]): void {
+    this.parse('info', message, args);
+  }
+
+  public warn(message: string, ...args: any[]): void {
+    this.parse('warn', message, args);
+  }
+
+  private parse(kind: string, message: string, args: any[]): void {
+    const lines = message.split(/[;\n]/g);
+    const messageRegular = /^\s*(.*):\s?(.*)/;
+    const templateLiterals = /%o|%O|%j/;
+    let argsCount = 0;
+    const result = lines.reduce((parsed, line) => {
+      const [match, left, right] = line.match(messageRegular) || [null, null, null];
+      if (match && left && right) {
+        const isTemplate = right.match(templateLiterals);
+
+        return {
+          ...parsed,
+          [left.trim().replace(' ', '_')]: isTemplate
+            ? args[argsCount++]
+            : JSON.stringify(right),
+        };
+      }
+
+      return parsed;
+    }, {} as any);
+    console.log(result);
   }
 }
 

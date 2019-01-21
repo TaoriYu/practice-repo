@@ -1,6 +1,6 @@
-import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import debug from 'debug';
+import { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { injectable, unmanaged } from 'inversify';
+import { log, Logger } from '../logger';
 
 /**
  * Class for working with http API, provide and instantiate axios instance from application
@@ -22,18 +22,25 @@ import { injectable, unmanaged } from 'inversify';
 export class Api<DtoClass> {
   public readonly api: AxiosInstance;
   /**
-   * run with: evn DEBUG=Api:* npm run dev  - to debug on the server
+   * run with: evn DEBUG=App:Api:* npm run dev  - to debug on the server
    * and use localStorage.debug = "Api:*"  - to debug on the client
    */
-  private apiDebug = debug(`Api:${this.constructor.name}`);
+  private apiDebug: Logger;
+
+  private static generateCustomConfigProps() {
+    return {
+      requestStartAt: new Date().toISOString(),
+      requestUniqueId: Math.floor(1000 + Math.random() * (10000 + 1 - 1000))
+    };
+  }
 
   public constructor(
-    @unmanaged() keyOrInstance: AxiosInstance
+    @unmanaged() keyOrInstance: AxiosInstance,
   ) {
     this.api = keyOrInstance as AxiosInstance;
-
     this.api.interceptors.request.use(this.requestLogger);
     this.api.interceptors.response.use(this.responseLogger);
+    this.apiDebug = log(`Api:${this.api.defaults.baseURL}/${this.api.defaults.url}`);
   }
 
   /**
@@ -41,28 +48,61 @@ export class Api<DtoClass> {
    * @param {OmitKeys<AxiosRequestConfig, "transformResponse" | "adapter" | "method" | "url" | "baseURL">} config
    * @returns {AxiosPromise<DtoClass>}
    */
-  public run(config: OmitKeys<AxiosRequestConfig, 'transformResponse' | 'adapter' | 'method' | 'url' | 'baseURL'>) {
-    return this.api.request<DtoClass>(config);
+  public async run(config: OmitKeys<AxiosRequestConfig, 'transformResponse' | 'adapter' | 'method' | 'url' | 'baseURL'>) {
+    const customs = Api.generateCustomConfigProps();
+    try {
+      return await this.api.request<DtoClass>({
+        ...config,
+        ...customs,
+      });
+    } catch (e) {
+      this.errorLogger(e, customs.requestUniqueId);
+      throw e;
+    }
+  }
+
+  private errorLogger(error: AxiosError, id: number) {
+    const errorType = error.response ? 'Response' : error.request ? 'Request' : 'Unrecognised';
+    const errorLog
+      = `\n=========== error ${id} ==========\n`
+      + `  ${errorType} error\n`
+      + `  Message: ${error.message}\n`
+      + `  Stack: ${error.stack}\n`
+      + `  Additional data: %O\n`
+      + `=============== end ===============\n`;
+    this.apiDebug.error(errorLog, error.response || {});
   }
 
   private requestLogger = (config: AxiosRequestConfig) => {
-    const { timeout, baseURL, headers, data, method, params, url } = config;
-
-    this.apiDebug('==request==');
-    this.apiDebug({ timeout, baseURL, headers, data, method, params, url });
-    this.apiDebug('====end====');
+    const { timeout, baseURL, headers, data, method, params, url, requestUniqueId, requestStartAt } = config as any;
+    const requestLog
+      = `\n=========== request ${requestUniqueId} ==========\n`
+      + `  baseUrl: ${baseURL}\n`
+      + `  url: ${url}\n`
+      + `  params: %o\n`
+      + `  method: ${method}\n`
+      + `  timeout: ${timeout}\n`
+      + `  headers: %O\n`
+      + `  data: %O\n`
+      + `  request start at: ${requestStartAt}\n`
+      + `=============== end ===============\n`;
+    this.apiDebug.debug(requestLog, params, headers, data);
 
     return config;
   }
 
   private responseLogger = (response: AxiosResponse) => {
-    const { baseURL, url } = response.config;
-
-    this.apiDebug('==response==');
-    this.apiDebug('urls: %o', { baseURL, url });
-    this.apiDebug('headers: %O', response.headers);
-    this.apiDebug('data: %O', response.data);
-    this.apiDebug('====end====');
+    const { url, requestUniqueId, requestStartAt } = response.config as any;
+    const execTime = (new Date().getTime() - new Date(requestStartAt).getTime());
+    const responseLog
+      = `\n=========== response ${requestUniqueId} ==========\n`
+      + `  url: ${url}\n`
+      + `  headers: %O\n`
+      + `  data: %O\n`
+      + `  cfg: %O\n`
+      + `  request execution time: ${execTime}ms\n`
+      + `================= end =================\n`;
+    this.apiDebug.debug(responseLog, response.headers, response.data, response.config);
 
     return response;
   }
