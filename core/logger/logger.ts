@@ -63,60 +63,11 @@ export class Logger {
   }
 
   public debug(message: string, ...args: any[]) {
-    (new SendToElastic()).debug(message, ...args);
     this._debug(message, ...args);
   }
 
   public error(message: string, ...args: any[]) {
     this._error(message, ...args);
-  }
-}
-
-interface ILoggerTransport {
-  debug(message: string, ...args: any[]): void;
-  info(message: string, ...args: any[]): void;
-  warn(message: string, ...args: any[]): void;
-  error(message: string, ...args: any[]): void;
-}
-
-class SendToElastic implements ILoggerTransport {
-  public debug(message: string, ...args: any[]): void {
-    this.parse('debug', message, args);
-  }
-
-  public error(message: string, ...args: any[]): void {
-    this.parse('error', message, args);
-  }
-
-  public info(message: string, ...args: any[]): void {
-    this.parse('info', message, args);
-  }
-
-  public warn(message: string, ...args: any[]): void {
-    this.parse('warn', message, args);
-  }
-
-  private parse(kind: string, message: string, args: any[]): void {
-    const lines = message.split(/[;\n]/g);
-    const messageRegular = /^\s*(.*):\s?(.*)/;
-    const templateLiterals = /%o|%O|%j/;
-    let argsCount = 0;
-    const result = lines.reduce((parsed, line) => {
-      const [match, left, right] = line.match(messageRegular) || [null, null, null];
-      if (match && left && right) {
-        const isTemplate = right.match(templateLiterals);
-
-        return {
-          ...parsed,
-          [left.trim().replace(' ', '_')]: isTemplate
-            ? args[argsCount++]
-            : JSON.stringify(right),
-        };
-      }
-
-      return parsed;
-    }, {} as any);
-    console.log(result);
   }
 }
 
