@@ -306,7 +306,7 @@ To fetch data from the server you need to do a few simple steps:
 
 What is [Dto](https://en.wikipedia.org/wiki/Data_transfer_object).  
 ```typescript
-class IncomingNoteDto {
+class NoteDto {
   @Expose({ name: '_id' })
   public id: string = '';
 
@@ -324,21 +324,24 @@ Lets look what are we done there:
 
 ### Now we need to create a class that will store data from api
 ```typescript
-class Note extends Api {
+class Note {
   public id: string = '';
   public createdAt: Date = new Date();
+  private fetchNote: Api<NoteDto>;
+
+  constructor(@inject(TApiFactory) apiFactory: TApiFactory) {
+    this.fetchNote = apiFactory('defaultApi', 'GET', '', NoteDto);
+  }
 
   public async getNote(noteId: string) {
-    const { data } = await this.api.get(`/note/${noteId}`);
-    this.fillSelf(this.toDTO(IncomingNoteDto, data));
+    const { data } = await this.fetchNote({ url: `/notes/${id}` });
+    this.id = data.id;
+    this.createdAt = data.createdAt;
   }
 } 
 ```
-`this.api` - it is Axios instance and it inhered from API.
-When we called `this.toDTO(IncomingNoteDto, data)` this method was inherited from API, it will serialise data to 
-exposed values in our DTO.
-After it we called `this.fillSelf` - this method is also inherited from API and it fill declared above properties from
-dto.
+apiFactory - it's a factory for Api instance. It's returned configured Api. Api class - facade
+for axios.
 
 So as you see DTO is the nice way to serialise your data in a declarative manner.
 
@@ -351,17 +354,20 @@ You can fetch data on server in `pages` components using `getInitialProps` like 
 ```typescript jsx
 export default class Home extends Component<IHomeProps> {
   public static async getInitialProps() {
+    // this code run on server side
     const notes = container.get(NotesStore);
     await notes.getNotes();
     return { notes: notes.notes };
   }
 
   public componentDidMount(): void {
+    // this code run on client side
     const note = container.get(NotesStore);
     note.fromIncomingNote(this.props.notes);
   }
 
   public render() {
+    // this code runs on both server and client side
     console.log('server rendered');
     return (
       <div>
@@ -384,4 +390,3 @@ Read more about [fetching data and the component lifecycle](https://github.com/z
 ## Exposing public and private configuration
 
 ## Known issues
-1. empty help screen in hygen store help
