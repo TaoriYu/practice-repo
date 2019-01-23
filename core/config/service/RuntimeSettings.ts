@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { log } from '../../logger';
 import { provideSingleton } from '../../provider';
 import { ConfigurationService } from './ConfigurationService';
@@ -8,11 +9,13 @@ export class RuntimeSettings {
   public service: ConfigurationService<{}> = new ConfigurationService();
   private log = log('RuntimeSettings');
   private mutex = false;
+  /* for preventing instance duplicating */
+  private uniqueServiceId = _.random(1000, 10000);
 
   public async enableRuntime() {
     if (!process.env.IS_SERVER) { return; }
     this.check();
-    this.log.info('runtime enabled');
+    this.log.info('runtime enabled %d', this.uniqueServiceId);
     await this.service.update();
     this.log.debug('first initial update finished');
 
@@ -44,8 +47,16 @@ export class RuntimeSettings {
 
   private async updateService() {
     this.log.debug('start update on all adapters');
-    await this.service.update();
-    this.log.debug('update finished');
+    try {
+      await this.service.update();
+      this.log.debug('all updates finished');
+    } catch (e) {
+      this.log.error(
+        'Runtime settings throw error while executing updates' +
+        `Message: ${e.message}` +
+        'stack: %O', e.stack,
+      );
+    }
     this.mutex = false;
   }
 }

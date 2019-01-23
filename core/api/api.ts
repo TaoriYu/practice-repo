@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { injectable, unmanaged } from 'inversify';
 import { log, Logger } from '../logger';
@@ -30,7 +31,7 @@ export class Api<DtoClass> {
   private static generateCustomConfigProps() {
     return {
       requestStartAt: new Date().toISOString(),
-      requestUniqueId: Math.floor(1000 + Math.random() * (10000 + 1 - 1000))
+      requestUniqueId: _.random(1000, 10000),
     };
   }
 
