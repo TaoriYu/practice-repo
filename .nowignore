@@ -1,9 +1,0 @@
-.idea
-core/_templates
-semantic/
-.cz-config.js
-.gitignore
-.hygen.js
-commitlint.config.js
-.next
-node_modules
