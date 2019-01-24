@@ -2,7 +2,7 @@ import { ConfigurationService, IConfig } from '../..';
 import { container } from '../../../provider/container';
 import { TestAdapter } from './testAdapter';
 
-const testConfig: IConfig<any> = {
+const testConfig: IConfig<{}> = {
   publicRuntimeConfig: {
     testPublic: {
       numberData: 1000,
@@ -20,7 +20,7 @@ const testConfig: IConfig<any> = {
 };
 
 container.bind(ConfigurationService).toSelf().inSingletonScope();
-const getService = () => container.get<ConfigurationService<any>>(ConfigurationService);
+const getService = () => container.get<ConfigurationService<{}>>(ConfigurationService);
 
 describe('configuration service test suite', () => {
   beforeAll(async () => {
@@ -48,7 +48,9 @@ describe('configuration service test suite', () => {
       serverRuntimeConfig: {},
     };
     const configurationToMerge3 = {
-      publicRuntimeConfig: { testMerged1: { data: 'never returned data', number: 2, public: true } },
+      publicRuntimeConfig: {
+        testMerged1: { data: 'never returned data', number: 2, public: true },
+      },
       serverRuntimeConfig: {},
     };
     service.registerAdapter(new TestAdapter(configurationToMerge1), 4);

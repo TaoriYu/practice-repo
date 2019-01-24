@@ -11,10 +11,10 @@ import {
 /**
  * Преобразует конфигурацию таким образом, что-бы поля содержащие ключ public помещались в
  * publicRuntimeConfiguration, ключи без public или с public: false помещались в serverRuntimeConfiguration
- * @param {IConfig} cfg - Конфиг над которым будет совершено преобразование
- * @param {T} cfgPart - Объект который будет помещен в нужный раздел конфига
- * @param {keyof IConfigFields} cfgPartName - ключ в конфиге в который бдует помещен объект
- * @returns {IConfig} - итоговый конфиг nextjs конфигурация.
+ * @param cfg - Конфиг над которым будет совершено преобразование
+ * @param cfgPart - Объект который будет помещен в нужный раздел конфига
+ * @param cfgPartName - ключ в конфиге в который бдует помещен объект
+ * @returns - итоговый конфиг nextjs конфигурация.
  * @example
  * const apiConf = { defaultApi: { baseURL: 'some', public: true }, internalApi: { baseURL: 'other' } }
  * const defaultNextConfig = {
@@ -38,7 +38,7 @@ import {
 export function transform<Fields extends TReturnConfigGroup<Fields>, T extends IConfigGroup>(
   cfg: IConfig<Fields>,
   cfgPart: T,
-  cfgPartName: keyof Fields
+  cfgPartName: keyof Fields,
 ): ICompiledConfiguration<TMakeCompiled<Fields>> {
   const env = (process.env.NODE_ENV || 'dev') as RequiredEnv | OptionalEnv;
 
@@ -46,8 +46,9 @@ export function transform<Fields extends TReturnConfigGroup<Fields>, T extends I
     (acc, val: keyof T) => {
       if (!acc.publicRuntimeConfig[cfgPartName] || !acc.serverRuntimeConfig[cfgPartName]) {
         throw new Error(
-          'you\'re mistakenly try to transform configuration with key: ' + cfgPartName + ' that isn\'t in configuration\n' +
-            'please add ' + cfgPartName + ' to your default configuration'
+          'you\'re mistakenly try to transform configuration '
+          + 'with key: ' + cfgPartName + ' that isn\'t in configuration\n'
+          + 'please add ' + cfgPartName + ' to your default configuration',
         );
       }
       const configGroup = cfgPart[val][env] ? cfgPart[val][env]! : cfgPart[val].dev;

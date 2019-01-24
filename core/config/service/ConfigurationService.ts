@@ -30,7 +30,6 @@ export class ConfigurationService<D extends TReturnConfigGroup<D>> implements IC
 
   /**
    * Returns public configuration you can access it both on server and client.
-   * @returns {IConfigFields}
    */
   public get publicRuntimeConfig(): TCompiledConfigFields<D> {
     return this._publicRuntimeConfig;
@@ -38,7 +37,6 @@ export class ConfigurationService<D extends TReturnConfigGroup<D>> implements IC
 
   /**
    * Returns private server configuration, you can access it only from server, on client it will return empty object
-   * @returns {IConfigFields}
    */
   public get serverRuntimeConfig(): TCompiledConfigFields<D> {
     return process.env.IS_SERVER ? this._serverRuntimeConfig : {} as TCompiledConfigFields<D>;
@@ -46,8 +44,6 @@ export class ConfigurationService<D extends TReturnConfigGroup<D>> implements IC
 
   /**
    * Register a new adapter, adapters used for fetching and retrieving configuration or a part of configuration;
-   * @param {IConfigurationAdapter} adapter
-   * @param {TAdapterPriorities} priority - adapter priority 0 is highest
    */
   public registerAdapter(adapter: IConfigurationAdapter, priority: TAdapterPriorities): void {
     this.adapters = this.adapters
@@ -58,13 +54,12 @@ export class ConfigurationService<D extends TReturnConfigGroup<D>> implements IC
   /**
    * Receive all data from the adapters sequent from lover priority to highest priority, higher priority adapters
    * erase configuration from lower priority adapters
-   * @returns {Promise<void>}
    */
   public async update() {
     const configurationToFill = this.getFullConfig();
 
-    for (const key in this.adapters) if (key in this.adapters) {
-      const result = await this.adapters[key].adapter.get();
+    for (const { adapter } of this.adapters) {
+      const result = await adapter.get();
       if (result) {
         merge(configurationToFill, result);
       }
@@ -79,8 +74,8 @@ export class ConfigurationService<D extends TReturnConfigGroup<D>> implements IC
       {},
       {
         publicRuntimeConfig: this.publicRuntimeConfig,
-        serverRuntimeConfig: this.serverRuntimeConfig
-      }
+        serverRuntimeConfig: this.serverRuntimeConfig,
+      },
     );
   }
 }

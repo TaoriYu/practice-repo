@@ -12,7 +12,7 @@ const fakeConfig2 = {
   serverRuntimeConfig: {},
 };
 cfg.registerAdapter(new TestAdapter(fakeConfig), 5);
-let dispose: any;
+let dispose: (() => void) | undefined;
 
 describe('runtime settings test suite', () => {
   beforeAll(() => {
@@ -33,7 +33,7 @@ describe('runtime settings test suite', () => {
         expect(cfg.publicRuntimeConfig).toMatchObject(fakeConfig2.publicRuntimeConfig);
         end();
       }, 100);
-    });
+    }).catch(() => { /* test must failed here */ });
   });
 
   test('should throw error when enabled multiply times', async () => {
@@ -44,13 +44,16 @@ describe('runtime settings test suite', () => {
 
   test('dispose runtime settings', (end) => {
     jest.useFakeTimers();
-    dispose();
-    const skipedCfg = { publicRuntimeConfig: { skipped: { data: 'skipped' } }, serverRuntimeConfig: {} };
-    cfg.registerAdapter(new TestAdapter(skipedCfg), 4);
+    if (dispose) { dispose(); }
+    const skippedCfg = {
+      publicRuntimeConfig: { skipped: { data: 'skipped' } },
+      serverRuntimeConfig: {},
+    };
+    cfg.registerAdapter(new TestAdapter(skippedCfg), 4);
     jest.advanceTimersByTime(11000);
     jest.useRealTimers();
     setTimeout(() => {
-      expect(cfg.publicRuntimeConfig).not.toMatchObject(skipedCfg.publicRuntimeConfig);
+      expect(cfg.publicRuntimeConfig).not.toMatchObject(skippedCfg.publicRuntimeConfig);
       end();
     }, 100);
   });

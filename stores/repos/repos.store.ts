@@ -4,7 +4,7 @@ import { Api } from '../../core/api';
 import { makeStore } from '../../core/provider';
 import { TApiFactory } from '../../di/bindings/bindApiService';
 import { SearchResults } from './dto';
-import { Repo } from './Repo';
+import { Repo } from './repo';
 
 @makeStore(ReposStore)
 export class ReposStore {

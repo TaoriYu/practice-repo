@@ -16,8 +16,13 @@ const defaultAxiosResponse500: OmitKeys<AxiosResponse, 'config'> = {
   data: {},
 };
 
+type TResponseFactory<D extends object = {}>
+  = ((config: AxiosRequestConfig) => Promise<AxiosResponse<D>>)
+  | D
+  | OmitKeys<AxiosResponse<D>, 'config'>;
+
 export function axiosMockFactory<D extends object = {}>(
-  responseFactory: ((config: AxiosRequestConfig) => Promise<AxiosResponse<D>>) | D | OmitKeys<AxiosResponse<D>, 'config'>,
+  responseFactory: TResponseFactory<D>,
   type: boolean = true,
 ): AxiosInstance {
   const configService = container.get(AppConfigurationService);
@@ -32,11 +37,11 @@ export function axiosMockFactory<D extends object = {}>(
       ? (config) => Promise.resolve(Object.assign({}, responseFactory, { config }))
       : (config) => Promise.reject(Object.assign({}, responseFactory, { config }));
   } else {
-    adapter = type
-      ? (config) =>
-        Promise.resolve(Object.assign({}, defaultAxiosResponse200, { data: responseFactory }, { config }))
-      : (config) =>
-        Promise.reject(Object.assign({}, defaultAxiosResponse500, { data: responseFactory }, { config }));
+    const resolver = (resp: OmitKeys<AxiosResponse, 'config'>) => (config: AxiosRequestConfig) =>
+      Promise.resolve(
+        Object.assign({}, resp, { data: responseFactory }, { config }),
+      );
+    adapter = type ? resolver(defaultAxiosResponse200) : resolver(defaultAxiosResponse500);
   }
 
   return axios.create({

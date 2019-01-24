@@ -1,7 +1,10 @@
 import * as React from 'react';
 import { Button, Input } from 'semantic-ui-react';
+import { Logger } from '../../core/logger';
 import { injectStore } from '../../core/provider';
 import { ReposStore } from '../../stores/repos';
+
+const logger = new Logger('Search');
 
 export interface ISearchProps {
   reposStore: ReposStore;
@@ -12,8 +15,8 @@ export interface ISearchState {
 }
 
 export class Search extends React.Component<ISearchProps, ISearchState> {
-  public readonly state = {
-    query: ''
+  public readonly state: Readonly<ISearchState> = {
+    query: '',
   };
 
   public render() {
@@ -37,7 +40,9 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
 
   private handleSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
-    this.props.reposStore.searchRepos(this.state.query);
+    this.props.reposStore.searchRepos(this.state.query).catch((exception) => {
+      logger.error(exception);
+    });
   }
 }
 

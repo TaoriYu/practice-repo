@@ -1,11 +1,15 @@
 import { Container } from 'inversify';
-import { LocalAdapter } from '../../config/adapters/LocalAdapter';
+import { LocalAdapter } from '../../config/adapters/localAdapter';
 import { AppConfigurationService } from '../../config';
 
 export function bindConfigurationService(container: Container) {
-  container.bind(AppConfigurationService).toSelf().inSingletonScope().onActivation((context, service) => {
-    service.registerAdapter(new LocalAdapter(), 0);
+  container
+    .bind(AppConfigurationService)
+    .toSelf()
+    .inSingletonScope()
+    .onActivation((context, service) => {
+      service.registerAdapter(new LocalAdapter(), 0);
 
-    return service;
-  });
+      return service;
+    });
 }

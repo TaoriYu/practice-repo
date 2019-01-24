@@ -1,2 +1,2 @@
 export * from './repos.store';
-export * from './Repo';
+export * from './repo';
