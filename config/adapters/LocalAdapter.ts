@@ -1,6 +1,6 @@
 import { IConfig } from '../../core/config';
 import { IConfigurationAdapter } from '../../core/config/service/adapters';
-import { IConfigFields } from '../IConfig';
+import { IConfigFields } from '../config.interface';
 
 /**
  * Simple, mostly example adapter that might return constant data;
@@ -12,6 +12,6 @@ export class LocalAdapter implements IConfigurationAdapter {
       return require('../../config/appConfig').appConfig;
     }
 
-    return;
+    return undefined;
   }
 }

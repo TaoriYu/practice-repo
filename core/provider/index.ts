@@ -1,4 +1,4 @@
 export * from './InjectStore';
-export * from './MakeStore';
+export * from './makeStore';
 export * from './provide';
 export * from './provideSingleton';

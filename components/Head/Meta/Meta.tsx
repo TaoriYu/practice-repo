@@ -15,5 +15,5 @@ export function Meta({ description }: IMetaProps) {
 }
 
 Meta.defaultProps = {
-  description: ''
+  description: '',
 };

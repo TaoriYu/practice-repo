@@ -3,6 +3,14 @@ import { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'ax
 import { injectable, unmanaged } from 'inversify';
 import { log, Logger } from '../logger';
 
+export type TRunConfiguration =
+  OmitKeys<AxiosRequestConfig, 'transformResponse' | 'adapter' | 'method' | 'url' | 'baseURL'>;
+
+interface IExtendedAxiosRequestConfig extends AxiosRequestConfig {
+  requestStartAt: Date;
+  requestUniqueId: number;
+}
+
 /**
  * Class for working with http API, provide and instantiate axios instance from application
  * configuration
@@ -46,10 +54,8 @@ export class Api<DtoClass> {
 
   /**
    * Runs configured request
-   * @param {OmitKeys<AxiosRequestConfig, "transformResponse" | "adapter" | "method" | "url" | "baseURL">} config
-   * @returns {AxiosPromise<DtoClass>}
    */
-  public async run(config: OmitKeys<AxiosRequestConfig, 'transformResponse' | 'adapter' | 'method' | 'url' | 'baseURL'>) {
+  public async run(config: TRunConfiguration) {
     const customs = Api.generateCustomConfigProps();
     try {
       return await this.api.request<DtoClass>({
@@ -75,7 +81,9 @@ export class Api<DtoClass> {
   }
 
   private requestLogger = (config: AxiosRequestConfig) => {
-    const { timeout, baseURL, headers, data, method, params, url, requestUniqueId, requestStartAt } = config as any;
+    const {
+      timeout, baseURL, headers, data, method, params, url, requestUniqueId, requestStartAt,
+    } = config as IExtendedAxiosRequestConfig;
     const requestLog
       = `\n=========== request ${requestUniqueId} ==========\n`
       + `  baseUrl: ${baseURL}\n`
@@ -93,7 +101,7 @@ export class Api<DtoClass> {
   }
 
   private responseLogger = (response: AxiosResponse) => {
-    const { url, requestUniqueId, requestStartAt } = response.config as any;
+    const { url, requestUniqueId, requestStartAt } = response.config as IExtendedAxiosRequestConfig;
     const execTime = (new Date().getTime() - new Date(requestStartAt).getTime());
     const responseLog
       = `\n=========== response ${requestUniqueId} ==========\n`

@@ -1,8 +1,9 @@
-import { IApi } from '../../../../config/IConfig';
+import { IApi } from '../../../../config';
 import { IConfig, IConfigGroup } from '../../types/internals';
 import { transform } from '../transformConfig';
 
 describe('configuration transform testing', () => {
+  // tslint:disable-next-line:no-any
   let defaultConfig: IConfig<any> = {
     serverRuntimeConfig: {},
     publicRuntimeConfig: {},
