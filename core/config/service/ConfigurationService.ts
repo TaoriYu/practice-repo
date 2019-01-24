@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { injectable, postConstruct } from 'inversify';
 import { ICompiledConfiguration, TCompiledConfigFields, TReturnConfigGroup } from '../types/internals';
 import { IConfigurationAdapter } from './adapters';
-import { merge } from 'lodash';
+import merge from 'lodash/merge';
 
 type TAdapterPriorities = 0 | 1 | 2 | 3 | 4 | 5;
 
