@@ -19,6 +19,7 @@ export function injectStore<E>(injected: E) {
 
       public render() {
         return React.createElement(
+          // tslint:disable-next-line:no-any
           Component as any,
           { ...this.props, ...this.injProps },
           this.props.children,
@@ -28,6 +29,7 @@ export function injectStore<E>(injected: E) {
   };
 }
 
+// tslint:disable-next-line:no-any
 type TInjectCfg<CFG extends any> = {
   [N in keyof CFG]: InstanceType<CFG[N]>;
 };

@@ -1,3 +1,4 @@
+/* tslint:disable:file-name-casing */
 import * as React from 'react';
 import { Head } from '../components/Head';
 import { Layout } from '../components/Layout';

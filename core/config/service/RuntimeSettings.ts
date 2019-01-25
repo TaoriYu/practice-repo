@@ -1,7 +1,7 @@
 import random from 'lodash/random';
 import { log } from '../../logger';
 import { provideSingleton } from '../../provider';
-import { ConfigurationService } from './ConfigurationService';
+import { ConfigurationService } from './configurationService';
 
 @provideSingleton(RuntimeSettings)
 export class RuntimeSettings {
@@ -13,7 +13,7 @@ export class RuntimeSettings {
   private uniqueServiceId = random(1000, 10000);
 
   public async enableRuntime() {
-    if (!process.env.IS_SERVER) { return; }
+    if (!process.env.IS_SERVER) { return undefined; }
     this.check();
     this.log.info('runtime enabled %d', this.uniqueServiceId);
     await this.service.update();

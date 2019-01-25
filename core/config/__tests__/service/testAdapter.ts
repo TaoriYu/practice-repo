@@ -1,14 +1,17 @@
 import { IConfig } from '../..';
 import { IConfigurationAdapter } from '../../service/adapters';
 
-export class TestAdapter implements IConfigurationAdapter {
-  private readonly mockConfiguration: IConfig<any>;
+// tslint:disable-next-line:no-any
+type MockedConfig = IConfig<any>;
 
-  public constructor(mockConfiguration: IConfig<any>) {
+export class TestAdapter implements IConfigurationAdapter {
+  private readonly mockConfiguration: MockedConfig;
+
+  public constructor(mockConfiguration: MockedConfig) {
     this.mockConfiguration = mockConfiguration;
   }
 
-  public get(): IConfig<any> | Promise<IConfig<any>> | undefined {
+  public get(): MockedConfig | Promise<MockedConfig> | undefined {
     return this.mockConfiguration;
   }
 }
@@ -17,8 +20,8 @@ describe('test adapter utils suite', () => {
   test('return data passed to constructor', () => {
     const data = {
       publicRuntimeConfig: {},
-      serverRuntimeConfig: {}
-    };
+      serverRuntimeConfig: {},
+    } as MockedConfig;
     const testAdapter = new TestAdapter(data);
     expect(testAdapter.get()).toBe(data);
   });

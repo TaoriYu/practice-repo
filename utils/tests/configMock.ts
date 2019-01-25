@@ -1,11 +1,11 @@
 import { AxiosRequestConfig } from 'axios';
-import { LocalAdapter } from '../../config/adapters/LocalAdapter';
+import { LocalAdapter } from '../../config/adapters/localAdapter';
 import { AppConfigurationService } from '../../config';
 import { container } from '../../di/container';
 
 const configService = container.get(AppConfigurationService);
 configService.registerAdapter(new LocalAdapter(), 0);
-configService.update();
+configService.update().catch();
 
 jest.mock('../../config/appConfig.ts', () => {
   return ({
@@ -27,6 +27,6 @@ jest.mock('../../config/appConfig.ts', () => {
         },
       },
       serverRuntimeConfig: {},
-    }
+    },
   });
 });

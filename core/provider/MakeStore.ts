@@ -11,8 +11,10 @@ const defaultOpts = {
   singletonScope: true,
 };
 
-export function makeStore(name: string | Newable<{}> | Abstract<{}> | symbol, opts: IOpts = defaultOpts) {
-  return <T extends { new(...args: any[]): {} }>(constructor: T) => {
+type TStoreName = string | Newable<{}> | Abstract<{}> | symbol;
+
+export function makeStore(name: TStoreName, opts: IOpts = defaultOpts) {
+  return <T extends IConstructable>(constructor: T) => {
     opts.singletonScope
       ? container.bind(name).to(constructor).inSingletonScope()
       : container.bind(name).to(constructor);

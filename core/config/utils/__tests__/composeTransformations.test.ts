@@ -1,8 +1,9 @@
-import { IApi } from '../../../../config/IConfig';
+import { IApi } from '../../../../config';
 import { IConfig, IConfigGroup } from '../../types/internals';
 import { composeTransformations } from '../composeTransformations';
 
 describe('compose config transformations', () => {
+  // tslint:disable-next-line:no-any
   let defaultConfig: IConfig<any> = {
     publicRuntimeConfig: {},
     serverRuntimeConfig: {},
@@ -69,8 +70,11 @@ describe('compose config transformations', () => {
         production: { baseURL: 'testTwo', timeout: 20, public: false },
       },
     };
-    const error = 'you\'re mistakenly try to transform configuration with key: notInConfigKey that isn\'t in configuration\n' +
-      'please add notInConfigKey to your default configuration';
+    const error
+      = 'you\'re mistakenly try to transform configuration with key: '
+      + 'notInConfigKey that isn\'t in configuration\n'
+      + 'please add notInConfigKey to your default configuration';
+
     expect(() => composeTransformations(
       defaultConfig,
       [fakeApiConfigFields, 'notInConfigKey'],
