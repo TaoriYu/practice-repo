@@ -60,13 +60,16 @@
   },
   "include": [
     "components",
+    "config",
+    "core",
+    "di",
     "pages",
-    "types",
-    "utils",
     "stores",
-    "core/config"
+    "types",
+    "utils"
   ],
   "exclude": [
-    "core/build"
+    "core/build/",
+    "core/tests/runners/"
   ]
 }
