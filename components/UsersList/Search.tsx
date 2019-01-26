@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react';
 import * as React from 'react';
 import { Button, Input } from 'semantic-ui-react';
-import { injectStore } from '../../core/provider/InjectStore';
+import { injectStore } from '../../core/provider';
 import { UsersStore } from '../../stores/users';
 
 export interface ISearchProps {

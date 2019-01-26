@@ -8,7 +8,8 @@ module.exports = {
   setupFiles: [
     './utils/tests/polyfills.ts',
     './di/container.ts',
-    './utils/tests/configMock.ts'
+    './utils/tests/configMock.ts',
+    './utils/tests/setupEnzyme.ts'
   ],
   coveragePathIgnorePatterns: [
     '.*\.dto\.ts',
