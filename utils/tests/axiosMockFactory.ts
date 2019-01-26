@@ -1,6 +1,7 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { AppConfigurationService } from '../../config';
 import { container } from '../../di/container';
+// tslint:disable-next-line:no-require-imports
 const settle = require('axios/lib/core/settle');
 
 const defaultAxiosResponse200: OmitKeys<AxiosResponse, 'config'> = {

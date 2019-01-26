@@ -11,5 +11,5 @@ export const defaultApi: IWithEnv<IApi> = {
     baseURL: 'https://api.github.com',
     timeout: 2000,
     public: true,
-  }
+  },
 };

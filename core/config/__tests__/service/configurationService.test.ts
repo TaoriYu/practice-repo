@@ -42,7 +42,7 @@ describe('configuration service test suite', () => {
   test('should ignore broken adapters', async () => {
     const service = new ConfigurationService();
     service.registerAdapter({
-      get() {
+      get(): undefined {
         return undefined;
       },
     }, 1);
