@@ -8,7 +8,9 @@
     "lint": "tslint --project ./tsconfig.json",
     "lint:staged": "lint-staged",
     "typecheck": "tsc --noEmit",
-    "test": "jest"
+    "test": "jest",
+    "test:w": "jest --watch",
+    "test:c": "node ./core/tests/runners/coverage.js"
   },
   "husky": {
     "hooks": {
@@ -56,6 +58,7 @@
     "hygen": "^1.6.2",
     "jest": "^23.6.0",
     "lint-staged": "^8.1.0",
+    "opn": "^5.4.0",
     "semantic-ui": "^2.4.2",
     "ts-jest": "^23.10.5",
     "tslint": "^5.12.1",

@@ -2,12 +2,16 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   testPathIgnorePatterns: [
-    ".*\.mock\.(tsx?|jsx?)"
+    '.*\.mock\.(tsx?|jsx?)'
   ],
   setupFiles: [
     './utils/tests/polyfills.ts',
     './di/container.ts',
     './utils/tests/configMock.ts'
+  ],
+  coveragePathIgnorePatterns: [
+    '.*\.dto\.ts',
+    '.*\.mock\.(tsx?|jsx?)'
   ],
   globals: {
     'ts-jest': {
