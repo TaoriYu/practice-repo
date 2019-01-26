@@ -2,16 +2,20 @@ import { Api } from '../../../core/api';
 import { axiosMockFactory } from '../../../utils/tests';
 import { SearchResults } from '../dto';
 import { ReposStore } from '../repos.store';
-jest.mock('../../../core/api');
+import { searchResultsMock } from './searchresults.mock';
 
 describe('ReposStore test suite', () => {
+  const searchResults = searchResultsMock();
   const apiFactoryMock = jest.fn(() => {
-    return new Api(axiosMockFactory({}));
+    return new Api(
+      axiosMockFactory<{data: SearchResults}>({
+        data: searchResults,
+      }),
+    );
   });
 
   beforeEach(() => {
     apiFactoryMock.mockClear();
-    Api.mockClear();
   });
 
   test('initialised without errors', () => {
@@ -25,7 +29,8 @@ describe('ReposStore test suite', () => {
   test('should search repos', async () => {
     const repo = new ReposStore(apiFactoryMock);
     await repo.searchRepos('test');
-    expect(Api).toHaveBeenCalledTimes(1);
-    expect(Api.mock.instances[0].run).toHaveBeenCalledTimes(1);
+    expect(repo.repos).toHaveLength(15);
+    expect(repo.repos).toEqual(searchResults.items);
+    expect(repo.totalCount).toBe(15);
   });
 });
