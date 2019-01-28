@@ -1,4 +1,4 @@
-/* tslint:disable:no-console */
+/* tslint:disable:no-console no-any */
 import debug from 'debug';
 
 enum ELogLevel {
@@ -26,7 +26,6 @@ export class Logger {
   /**
    * Sets the level of logger verbosity.
    * @see ELogLevel
-   * @param {ELogLevel} level
    */
   public static setLogLevel(level?: ELogLevel) {
     switch (level) {

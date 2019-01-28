@@ -1,7 +1,7 @@
 import random from 'lodash/random';
 import { log } from '../../logger';
 import { provideSingleton } from '../../provider';
-import { ConfigurationService } from './ConfigurationService';
+import { ConfigurationService } from './configurationService';
 
 @provideSingleton(RuntimeSettings)
 export class RuntimeSettings {
@@ -13,7 +13,7 @@ export class RuntimeSettings {
   private uniqueServiceId = random(1000, 10000);
 
   public async enableRuntime() {
-    if (!process.env.IS_SERVER) { return; }
+    if (!process.env.IS_SERVER) { return undefined; }
     this.check();
     this.log.info('runtime enabled %d', this.uniqueServiceId);
     await this.service.update();
@@ -35,6 +35,7 @@ export class RuntimeSettings {
         if (!this.mutex) {
           this.mutex = true;
           await this.updateService();
+          this.mutex = false;
         } else {
           this.log.warn(`cannot update configs because previous update cycle is'not finished`);
         }
@@ -52,11 +53,10 @@ export class RuntimeSettings {
       this.log.debug('all updates finished');
     } catch (e) {
       this.log.error(
-        'Runtime settings throw error while executing updates' +
-        `Message: ${e.message}` +
-        'stack: %O', e.stack,
+        'Runtime settings throw error while executing updates\n' +
+        `Message: ${e.message}\n` +
+        'stack: %O\n', e.stack,
       );
     }
-    this.mutex = false;
   }
 }

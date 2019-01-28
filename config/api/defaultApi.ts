@@ -1,4 +1,4 @@
-import { IApi } from '../IConfig';
+import { IApi } from '../config.interface';
 import { IWithEnv } from '../../core/config';
 
 export const defaultApi: IWithEnv<IApi> = {
@@ -11,5 +11,5 @@ export const defaultApi: IWithEnv<IApi> = {
     baseURL: 'https://api.github.com',
     timeout: 2000,
     public: true,
-  }
+  },
 };

@@ -1,7 +1,7 @@
 import {
   IConfigGroup,
   IWithPublic,
-  TReturnConfigGroup
+  TReturnConfigGroup,
 } from '../core/config';
 
 export interface IConfigFields extends TReturnConfigGroup<IConfigFields> {

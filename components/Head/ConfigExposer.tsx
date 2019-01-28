@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AppConfigurationService } from '../../config/AppConfigurationService';
+import { AppConfigurationService } from '../../config';
 import { injectStore } from '../../core/provider';
 
 export interface IConfigExposerProps {
@@ -17,4 +17,5 @@ class ConfigExposerComponent extends React.PureComponent<IConfigExposerProps> {
   }
 }
 
-export const ConfigExposer = injectStore({ configurationService: AppConfigurationService })(ConfigExposerComponent);
+export const ConfigExposer =
+  injectStore({ configurationService: AppConfigurationService })(ConfigExposerComponent);

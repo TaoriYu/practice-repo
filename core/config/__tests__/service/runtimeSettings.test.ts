@@ -1,57 +1,83 @@
-import { ConfigurationService, RuntimeSettings } from '../..';
-import { TestAdapter } from './testAdapter';
+import { RuntimeSettings } from '../../service/runtimeSettings';
+import { ConfigurationService } from '../../service/configurationService';
+import Mocked = jest.Mocked;
+jest.mock('../../service/configurationService');
 
-const runtime = new RuntimeSettings();
-const cfg = new ConfigurationService();
-const fakeConfig = {
-  publicRuntimeConfig: { testConfig: { data: 'static data' } },
-  serverRuntimeConfig: {},
-};
-const fakeConfig2 = {
-  publicRuntimeConfig: { testConfigUploaded: { data: 'remote data' } },
-  serverRuntimeConfig: {},
-};
-cfg.registerAdapter(new TestAdapter(fakeConfig), 5);
-let dispose: any;
+const configurationServiceMock: () => Mocked<ConfigurationService<{}>>
+  = () => new ConfigurationService() as any;
 
 describe('runtime settings test suite', () => {
-  beforeAll(() => {
-    Object.assign(process.env, { IS_SERVER: 1 });
-    runtime.service = cfg;
+  beforeEach(() => {
+    jest.clearAllTimers();
     jest.useFakeTimers();
+    Object.assign(process.env, { IS_SERVER: 1 });
   });
 
-  test('runtime settings updates configuration', (end) => {
-    expect(cfg.publicRuntimeConfig).toEqual({});
-    runtime.enableRuntime().then((stopFn) => {
-      dispose = stopFn;
-      expect(cfg.publicRuntimeConfig).toEqual(fakeConfig.publicRuntimeConfig);
-      cfg.registerAdapter(new TestAdapter(fakeConfig2), 4);
-      jest.advanceTimersByTime(10000);
-      jest.useRealTimers();
-      setTimeout(() => {
-        expect(cfg.publicRuntimeConfig).toMatchObject(fakeConfig2.publicRuntimeConfig);
-        end();
-      }, 100);
-    });
+  test('runtime settings trigger updates every 10 seconds', async () => {
+    const runtime = new RuntimeSettings();
+    runtime.service = configurationServiceMock();
+    expect(runtime.isRuntimeEnabled).toBeFalsy();
+    expect(await runtime.enableRuntime()).toBeDefined();
+    expect(runtime.service.update).toBeCalledTimes(1);
+    jest.advanceTimersByTime(10000);
+    expect(runtime.service.update).toBeCalledTimes(2);
+  });
+
+  test('should dispose runtime after enabling', async () => {
+    const runtime = new RuntimeSettings();
+    const cfgSrv = configurationServiceMock();
+    runtime.service = cfgSrv;
+    expect(runtime.isRuntimeEnabled).toBeFalsy();
+    const dispose = await runtime.enableRuntime();
+    expect(dispose).toBeDefined();
+    jest.advanceTimersByTime(10000);
+    // first time it was called after enabling
+    expect(cfgSrv.update).toBeCalledTimes(2);
+    cfgSrv.update.mockClear();
+    dispose!();
+    jest.advanceTimersByTime(10000);
+    expect(cfgSrv.update).not.toBeCalled();
   });
 
   test('should throw error when enabled multiply times', async () => {
+    const runtime = new RuntimeSettings();
+    await runtime.enableRuntime();
     await expect(runtime.enableRuntime())
       .rejects
       .toEqual(new Error('you trying to enable runtime settings that already enabled'));
   });
 
-  test('dispose runtime settings', (end) => {
-    jest.useFakeTimers();
-    dispose();
-    const skipedCfg = { publicRuntimeConfig: { skipped: { data: 'skipped' } }, serverRuntimeConfig: {} };
-    cfg.registerAdapter(new TestAdapter(skipedCfg), 4);
-    jest.advanceTimersByTime(11000);
-    jest.useRealTimers();
-    setTimeout(() => {
-      expect(cfg.publicRuntimeConfig).not.toMatchObject(skipedCfg.publicRuntimeConfig);
-      end();
-    }, 100);
+  test('should not enable runtime on the client', async () => {
+    delete process.env.IS_SERVER;
+    const runtime = new RuntimeSettings();
+    expect(await runtime.enableRuntime()).toBeUndefined();
+    expect(runtime.isRuntimeEnabled).toBeFalsy();
+  });
+
+  test('should not calling update if previous cycle not finished', async () => {
+    const runtime = new RuntimeSettings();
+    const cfgSrv = configurationServiceMock();
+    runtime.service = cfgSrv;
+    await runtime.enableRuntime();
+    cfgSrv.update.mockImplementation(() =>
+      new Promise((resolve) => setTimeout(resolve, 20000)),
+    );
+    expect(cfgSrv.update).toHaveBeenCalledTimes(1);
+    jest.advanceTimersByTime(10000);
+    expect(cfgSrv.update).toHaveBeenCalledTimes(2);
+    jest.advanceTimersByTime(10000);
+    expect(cfgSrv.update).toHaveBeenCalledTimes(2);
+  });
+
+  test('should catch exception in service update', async () => {
+    const runtime = new RuntimeSettings();
+    const cfgSrv = configurationServiceMock();
+    runtime.service = cfgSrv;
+    // @ts-ignore
+    const logSpy = jest.spyOn(runtime.log, 'error');
+    await runtime.enableRuntime();
+    cfgSrv.update.mockImplementation(() => { throw new Error('ouch'); });
+    jest.advanceTimersByTime(10000);
+    expect(logSpy.mock.calls[0][0]).toMatch('ouch');
   });
 });

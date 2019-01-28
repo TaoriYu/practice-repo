@@ -1,2 +1,2 @@
-export * from './AppConfigurationService';
-export * from './IConfig';
+export * from './appConfigurationService';
+export * from './config.interface';

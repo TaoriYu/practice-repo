@@ -1,6 +1,6 @@
 import * as apis from './api';
 import { IConfig, composeTransformations } from '../core/config';
-import { IConfigFields } from './IConfig';
+import { IConfigFields } from './config.interface';
 
 const defaultConfig: IConfig<IConfigFields> = {
   publicRuntimeConfig: {
