@@ -3,7 +3,9 @@ message: |
   - hygen {bold component dir} --name [NAME] --pure [BOOL]
     Generate a React component directory with Component.tsx style.css and index file.
     cd into directory where ypu want to create component and execute command above
-  - hygen {bold component plain} --name [NAME]
+    generate pure component if pure specified
+  - hygen {bold component plain} --name [NAME] --pure [BOOL]
     Generate plain react functional component also inject component into an index file
     cd into directory where ypu want to create component and execute command above
+    generate pure component if pure specified
 ---
