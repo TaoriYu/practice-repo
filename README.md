@@ -15,7 +15,8 @@
   - [npm run lint](#npm-run-lint)
   - [npm run lint:staged](#npm-run-lintstaged)
   - [npm run typecheck](#npm-run-typecheck)
-  - [npm run test](#npm-run-test)
+  - [npm run test:w](#npm-run-test-w)
+  - [npm run test:c](#npm-run-test-c)
 - [Использование CSS](#css-usage)
 - [Интеграция с IDE](#ide-integration)
 - [Генерация кода](#code-generation)
@@ -28,13 +29,15 @@
 <a name="make-new-microservice"></a>
 ## Создание нового микросервиса
 Для того что-бы развернуть новый микросервис нужно:
-1. Скопировать репозиторий [шаблона](https://bitbucket.corp.tass.ru/projects/TASS/repos/react-microservice-template) в другую репу
-2. В названии репозитория указать назавние проекта по шаблону '_*-frontend_' пример: *tass-com-frontend*
-3. Склонировать репозиторий и удалить из него все ветки кроме **master**
-4. Если используете git-flow необходимо создать ветку develop и выбрать ее в настройках как default branch
-5. Склонировать проект
-6. Поменять поле name в package.json c _template-app_ на название репозитория
-7. закомитить изменения
+1. Склонировать репозиторий [шаблона](https://bitbucket.corp.tass.ru/projects/TASS/repos/react-microservice-template)
+и удалить из него все ветки кроме **master**
+2. Создать новый репозиторий в названии репозитория указать назавние проекта по шаблону '_*-frontend_' пример: 
+*tass-com-frontend*
+3. перейти в клон из п1 и выполнить git remote remove origin
+4  git remote add origin (урл который получили в п2)
+5. Если используете git-flow необходимо создать ветку develop и выбрать ее в настройках как default branch
+7. Поменять поле name в package.json c _template-app_ на название репозитория
+8. закомитить изменения
 
 <a name="start"></a>
 ## Запуск
@@ -106,11 +109,13 @@
 ### `npm run typecheck`
 Запускает typecheck для проверки по всему проекту.
 
-<a name="npm-run-test"></a>
-### `npm run test`
-Запускает тесты для всего приложения.<br>
-Для перехода в режим наблюдения запускаем командой `npm run -- --watch`.<br>
-Для запуска со сборкой покрытия `npm run -- --coverage`.
+<a name="npm-run-test-w"></a>
+### `npm run test:w`
+Запускает тесты для всего приложения. В режиме наблюдения (jest-cli)
+
+<a name="npm-run-test-c"></a>
+### `npm run test:c`
+Запускает тесты для всего приложения. Собирает покрытие и открывает в окне браузера.
 
 <a name="css-usage"></a>
 ## Использование CSS
