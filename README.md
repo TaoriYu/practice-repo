@@ -28,7 +28,7 @@
 <a name="make-new-microservice"></a>
 ## Создание нового микросервиса
 Для того что-бы развернуть новый микросервис нужно:
-1. Форкнуть репозиторий [шаблона](https://bitbucket.corp.tass.ru/projects/TASS/repos/react-microservice-template)
+1. Скопировать репозиторий [шаблона](https://bitbucket.corp.tass.ru/projects/TASS/repos/react-microservice-template) в другую репу
 2. В названии репозитория указать назавние проекта по шаблону '_*-frontend_' пример: *tass-com-frontend*
 3. Склонировать репозиторий и удалить из него все ветки кроме **master**
 4. Если используете git-flow необходимо создать ветку develop и выбрать ее в настройках как default branch
