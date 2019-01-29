@@ -34,7 +34,7 @@
 2. Создать новый репозиторий в названии репозитория указать назавние проекта по шаблону '_*-frontend_' пример: 
 *tass-com-frontend*
 3. перейти в клон из п1 и выполнить git remote remove origin
-4  git remote add origin (урл который получили в п2)
+4. git remote add origin (урл который получили в п2)
 5. Если используете git-flow необходимо создать ветку develop и выбрать ее в настройках как default branch
 7. Поменять поле name в package.json c _template-app_ на название репозитория
 8. закомитить изменения
