@@ -68,6 +68,7 @@
     "no-conditional-assignment":true,
     "no-duplicate-super": true,
     "no-duplicate-imports": true,
+    "no-consecutive-blank-lines": true,
     "no-console": [
       true,
       "debug",

@@ -30,7 +30,6 @@ module.exports = (nextConfig = {}) => {
       const { dir, defaultLoaders, dev, isServer } = options
 
       config.resolve.extensions.push('.ts', '.tsx')
-      config.module.rules = [];
 
       // Backwards compatibility with older versions of Next.js.
       // Next.js will automatically apply hot-self-accept-loader for all extensions in `pageExtensions`
