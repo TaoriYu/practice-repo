@@ -18,6 +18,8 @@
   - [npm run test:w](#npm-run-test-w)
   - [npm run test:c](#npm-run-test-c)
 - [Использование CSS](#css-usage)
+  - [Глобальные стили](#css-usage-global-styles)
+  - [Использование classNames](#css-usage-classNames)
 - [Интеграция с IDE](#ide-integration)
 - [Генерация кода](#code-generation)
   - [hygen store](#hygen-store)
@@ -120,6 +122,35 @@
 <a name="css-usage"></a>
 ## Использование CSS
 Мы любим css модули [подробнее тут](https://github.com/css-modules/css-modules)
+
+<a name="css-usage-global-styles"></a>
+### Глобальные стили
+Расположение в ./components/Head/globalCss/[cssName].css
+импортим в Head.tsx
+
+<a name="css-usage-classNames"></a>
+### Использование classNames
+Для мерджа стилей используем библиотеку classNames
+```typescript jsx
+import { PureComponent } from 'react';
+import classNames from 'classnames/bind';
+import styles from './submit-button.css';
+
+let cx = classNames.bind(styles); // always throw bindings
+
+export default class SubmitButton extends PureComponent {
+  render () {
+    let text = this.props.store.submissionInProgress ? 'Processing...' : 'Submit';
+    let className = cx({
+      base: true,
+      inProgress: this.props.store.submissionInProgress,
+      error: this.props.store.errorOccurred,
+      disabled: this.props.form.valid,
+    });
+    return <button className={className}>{text}</button>;
+  }
+};
+```
 
 <a name="ide-integration"></a>
 ## Интеграция с IDE
