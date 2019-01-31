@@ -1,6 +1,6 @@
 /* tslint:disable:max-classes-per-file */
 import { container } from '../container';
-import { makeStore } from '../MakeStore';
+import { makeStore } from '../makeStore';
 
 describe('make store test suite', () => {
   test('should bind class in singleton scope', () => {

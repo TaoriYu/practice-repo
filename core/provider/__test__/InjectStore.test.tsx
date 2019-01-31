@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { injectStore } from '../InjectStore';
-import { makeStore } from '../MakeStore';
+import { makeStore } from '../makeStore';
 
 describe('inject store test suite', () => {
   test('should inject store into component', () => {
