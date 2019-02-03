@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:w": "jest --watch",
-    "test:c": "node ./core/tests/runners/coverage.js"
+    "test:c": "node ./core/tests/runners/coverage.js",
+    "swagger": "./core/build/genSwagger.sh"
   },
   "husky": {
     "hooks": {
