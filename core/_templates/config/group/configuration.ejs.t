@@ -7,5 +7,5 @@ export const sample = {
   },
   production: {
     public: false,
-  }
+  },
 };

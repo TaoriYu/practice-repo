@@ -1,10 +1,8 @@
+import { mocked } from 'ts-jest/utils';
 import { RuntimeSettings } from '../../service/runtimeSettings';
 import { ConfigurationService } from '../../service/configurationService';
-import Mocked = jest.Mocked;
-jest.mock('../../service/configurationService');
 
-const configurationServiceMock: () => Mocked<ConfigurationService<{}>>
-  = () => new ConfigurationService() as any;
+jest.mock('../../service/configurationService');
 
 describe('runtime settings test suite', () => {
   beforeEach(() => {
@@ -15,7 +13,7 @@ describe('runtime settings test suite', () => {
 
   test('runtime settings trigger updates every 10 seconds', async () => {
     const runtime = new RuntimeSettings();
-    runtime.service = configurationServiceMock();
+    runtime.service = new ConfigurationService();
     expect(runtime.isRuntimeEnabled).toBeFalsy();
     expect(await runtime.enableRuntime()).toBeDefined();
     expect(runtime.service.update).toBeCalledTimes(1);
@@ -25,15 +23,16 @@ describe('runtime settings test suite', () => {
 
   test('should dispose runtime after enabling', async () => {
     const runtime = new RuntimeSettings();
-    const cfgSrv = configurationServiceMock();
+    const cfgSrv = new ConfigurationService();
     runtime.service = cfgSrv;
     expect(runtime.isRuntimeEnabled).toBeFalsy();
     const dispose = await runtime.enableRuntime();
     expect(dispose).toBeDefined();
+    expect(runtime.isRuntimeEnabled).toBeTruthy();
     jest.advanceTimersByTime(10000);
     // first time it was called after enabling
     expect(cfgSrv.update).toBeCalledTimes(2);
-    cfgSrv.update.mockClear();
+    mocked(cfgSrv.update).mockClear();
     dispose!();
     jest.advanceTimersByTime(10000);
     expect(cfgSrv.update).not.toBeCalled();
@@ -56,10 +55,10 @@ describe('runtime settings test suite', () => {
 
   test('should not calling update if previous cycle not finished', async () => {
     const runtime = new RuntimeSettings();
-    const cfgSrv = configurationServiceMock();
+    const cfgSrv = new ConfigurationService();
     runtime.service = cfgSrv;
     await runtime.enableRuntime();
-    cfgSrv.update.mockImplementation(() =>
+    mocked(cfgSrv.update).mockImplementation(() => () =>
       new Promise((resolve) => setTimeout(resolve, 20000)),
     );
     expect(cfgSrv.update).toHaveBeenCalledTimes(1);
@@ -71,12 +70,12 @@ describe('runtime settings test suite', () => {
 
   test('should catch exception in service update', async () => {
     const runtime = new RuntimeSettings();
-    const cfgSrv = configurationServiceMock();
+    const cfgSrv = new ConfigurationService();
     runtime.service = cfgSrv;
     // @ts-ignore
     const logSpy = jest.spyOn(runtime.log, 'error');
     await runtime.enableRuntime();
-    cfgSrv.update.mockImplementation(() => { throw new Error('ouch'); });
+    mocked(cfgSrv.update).mockImplementation(() => { throw new Error('ouch'); });
     jest.advanceTimersByTime(10000);
     expect(logSpy.mock.calls[0][0]).toMatch('ouch');
   });

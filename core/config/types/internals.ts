@@ -43,5 +43,5 @@ export type TReturnConfigGroup<T = unknown> = TMappedFields<T, IConfigGroup>;
 export type TReturnCompiledConfigGroup<T = unknown> = TMappedFields<T, ICompiledConfigGroup>;
 
 export type TMakeCompiled<T extends TReturnConfigGroup<T>> = {
-  [N in keyof T]: T[N] extends IConfigGroup<infer E> ? ICompiledConfigGroup<E> : T[N];
+  [N in keyof T]: T[N] extends IConfigGroup<infer E> ? ICompiledConfigGroup<E> : never;
 };
