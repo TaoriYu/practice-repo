@@ -37,17 +37,12 @@ module.exports = {
     { name: "configs" },
     { name: "core" },
     { name: "stores" },
+    { name: "code-utils" }
   ],
 
   // Возможность задать спец ОБЛАСТЬ для определенного типа коммита (пример для 'fix')
-  scopeOverrides: {
-    build: [
-      {name: 'hygen'},
-      {name: "configs"},
-      {name: "code-utils"},
-      { name: "core" },
-    ]
-  },
+  // scopeOverrides: {
+  // },
 
   // Поменяем дефолтные вопросы
   messages: {

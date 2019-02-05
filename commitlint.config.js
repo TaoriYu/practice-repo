@@ -41,7 +41,8 @@ module.exports = {
         'core',
         'stores',
         'hygen',
-        'code-utils'
+        'code-utils',
+        ''
       ]
     ]
   }

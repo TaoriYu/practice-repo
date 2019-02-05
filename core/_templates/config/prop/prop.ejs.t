@@ -1,8 +1,8 @@
 ---
 to: <%= h.projectRoot %>/config/<%= to %>/<%= h.lcFirst(name) %>.ts
 ---
-import { I<%= h.ucFirst(to) %> } from '../types/IConfig';
-import { IWithEnv } from '../types/internals';
+import { I<%= h.ucFirst(to) %> } from '../config.interface';
+import { IWithEnv } from '../../core/config';
 
 export const <%= h.lcFirst(name) %>: IWithEnv<I<%= h.ucFirst(to) %>> = {
   dev: {
@@ -10,5 +10,5 @@ export const <%= h.lcFirst(name) %>: IWithEnv<I<%= h.ucFirst(to) %>> = {
   },
   production: {
     public: false,
-  }
+  },
 }
