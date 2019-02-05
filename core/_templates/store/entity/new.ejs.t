@@ -1,5 +1,5 @@
 ---
-to: ./<%= h.lcFirst(name) %>.ts
+to: ./<%= h.lcFirst(name) %>.entity.ts
 ---
 <% hasApi = typeof withApi !== "undefined" -%>
 <% if (hasApi) { -%>
