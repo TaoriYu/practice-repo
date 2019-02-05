@@ -58,7 +58,7 @@ describe('runtime settings test suite', () => {
     const cfgSrv = new ConfigurationService();
     runtime.service = cfgSrv;
     await runtime.enableRuntime();
-    mocked(cfgSrv.update).mockImplementation(() =>
+    mocked(cfgSrv.update).mockImplementation(() => () =>
       new Promise((resolve) => setTimeout(resolve, 20000)),
     );
     expect(cfgSrv.update).toHaveBeenCalledTimes(1);
