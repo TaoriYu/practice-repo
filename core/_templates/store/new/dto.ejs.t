@@ -1,9 +1,9 @@
 ---
-to: <%= h.projectRoot %>/stores/<%= h.lcFirst(name) %>/dto/incoming<%= h.ucFirst(name) %>.dto.ts
+to: <%= h.projectRoot %>/stores/<%= h.lcFirst(name) %>/dto/<%= h.lcFirst(name) %>.dto.ts
 ---
 import { Expose, Type } from 'class-transformer';
 
-export class Incoming<%= h.ucFirst(name) %> {
+export class <%= h.ucFirst(name) %>Dto {
   /** идентификатор */
   @Expose({ name: '_id' })
   public id: string = '';
