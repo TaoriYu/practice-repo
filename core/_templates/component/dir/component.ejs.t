@@ -7,14 +7,14 @@ import * as styles from './<%= h.lcFirst(name) %>.css';
 export interface I<%= h.ucFirst(name) %>Props {
   children?: React.ReactNode;
 }
-<% if (!pure) { -%>
+<% if (typeof pure === "undefined") { -%>
 export function <%= h.ucFirst(name) %>({ children }: I<%= h.ucFirst(name) %>Props) {
   return (
     <div className={styles.style}>{children}</div>
   );
 }
 <% } %>
-<% if (pure) { -%>
+<% if (typeof pure !== "undefined") { -%>
 export class <%= h.ucFirst(name) %> extends React.PureComponent<I<%= h.ucFirst(name) %>Props>{
   public render() {
     const { children } = this.props;
