@@ -35,7 +35,8 @@
     "forin": true,
     "indent": [
       true,
-      "spaces"
+      "spaces",
+      2
     ],
     "linebreak-style": [
       true,
