@@ -2,7 +2,8 @@
   "defaultSeverity": "error",
   "extends": [
     "tslint:recommended",
-    "tslint-react"
+    "tslint-react",
+    "tslint-eslint-rules"
   ],
   "jsRules": {},
   "rules": {
@@ -189,7 +190,12 @@
     "no-parameter-reassignment": true,
     "deprecation": true,
     "newline-before-return": true,
-    "callable-types": false
+    "callable-types": false,
+    "object-curly-spacing": [
+      true,
+      "always",
+      { "arraysInObjects": false, "objectsInObjects": true }
+    ]
   },
   "rulesDirectory": []
 }
