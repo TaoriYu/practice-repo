@@ -62,7 +62,11 @@
       "static-before-instance",
       "variables-before-functions"
     ],
-    "member-access": true,
+    "member-access": [true,
+      "check-accessor",
+      "check-constructor",
+      "check-parameter-property"
+    ],
     "no-arg": true,
     "no-bitwise": true,
     "no-conditional-assignment":true,
