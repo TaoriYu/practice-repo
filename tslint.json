@@ -195,7 +195,8 @@
       true,
       "always",
       { "arraysInObjects": false, "objectsInObjects": true }
-    ]
+    ],
+    "space-in-parens": [true, "never"]
   },
   "rulesDirectory": []
 }
