@@ -3,8 +3,8 @@ import 'reflect-metadata';
 import { NextComponentType, NextContext } from 'next';
 import * as React from 'react';
 import App, { Container } from 'next/app';
-import { RuntimeSettings } from '../core/config';
-import { container } from '../di/container';
+import { log } from '../core/logger';
+import { Ignition } from '../ignition';
 
 interface IInitialPropsArgs {
   ctx: NextContext;
@@ -17,16 +17,25 @@ export default class CustomApp extends App {
 
   public static async getInitialProps({ Component, ctx }: IInitialPropsArgs) {
     let pageProps = {};
-    const runtimeSettings = container.get(RuntimeSettings);
-    if (!runtimeSettings.isRuntimeEnabled) {
-      await runtimeSettings.enableRuntime();
+    try {
+      pageProps = await new Ignition(ctx).turnOn();
+    } catch (e) {
+      log('Ignition').error(
+        'Ошибка во время исполнения Ignition checks',
+      );
     }
 
     if (Component.getInitialProps) {
-      pageProps = await Component.getInitialProps(ctx);
+      const componentDerived = await Component.getInitialProps(ctx);
+      pageProps = Object.assign({}, pageProps, componentDerived);
     }
 
     return { pageProps };
+  }
+
+  public constructor(props: any) {
+    super(props);
+    new Ignition().bind(props.pageProps);
   }
 
   public render() {
