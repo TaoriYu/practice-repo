@@ -13,15 +13,18 @@ module.exports = (phase, { defaultConfig }) => {
   const withTypescript = require('./core/build/withTypescript');
   const withCSS = require('@zeit/next-css');
 
-  return withTypescript(withCSS({
-    cssModules: 'global',
+  return withTypescript(withCSS(Object.assign({}, makeCssConfig(), customs())));
+};
+
+function makeCssConfig() {
+  return {
+    cssModules: 'global', // enabling modules in global scope
     cssLoaderOptions: {
       importLoaders: 1,
       localIdentName: "[name]_[local]__[hash:base64:5]",
     },
-    ...customs(),
-  }));
-};
+  }
+}
 
 function customs() {
   const webpack = require('webpack');
