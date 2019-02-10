@@ -12,7 +12,7 @@ class ConfigExposerComponent extends React.PureComponent<IConfigExposerProps> {
     const cfgScript = `window.__CONFIGURATION__ = JSON.parse('${JSON.stringify(conf)}')`;
 
     return (
-      <script dangerouslySetInnerHTML={{__html: cfgScript}} />
+      <script dangerouslySetInnerHTML={{ __html: cfgScript }} />
     );
   }
 }
