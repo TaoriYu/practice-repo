@@ -1,0 +1,6 @@
+/node_modules
+/semantic
+/static/semantic.css
+/static/semantic.min.css
+/static/themes
+/coverage

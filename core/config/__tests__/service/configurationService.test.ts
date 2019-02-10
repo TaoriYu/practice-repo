@@ -43,7 +43,7 @@ describe('configuration service test suite', () => {
     const service = new ConfigurationService();
     service.registerAdapter({
       get(): undefined {
-        return undefined;
+        return;
       },
     }, 1);
     service.registerAdapter(new AdapterMock(testConfig), 5);
