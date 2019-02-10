@@ -5,7 +5,9 @@
     "build": "next build",
     "build:static": "gulp --gulpfile ./semantic/gulpfile.js build",
     "start": "next start",
-    "lint": "tslint --project ./tsconfig.json",
+    "lint": "(npm run lint:code & npm run lint:styles & wait)",
+    "lint:code": "tslint --project ./tsconfig.json",
+    "lint:styles": "stylelint './**/*.@(less|css)'",
     "lint:staged": "lint-staged",
     "typecheck": "tsc --noEmit",
     "test": "jest",
@@ -22,7 +24,12 @@
   },
   "lint-staged": {
     "*.{ts,tsx}": [
-      "tslint"
+      "tslint --fix",
+      "git add"
+    ],
+    "*.{css,less}": [
+      "stylelint --fix",
+      "git add"
     ]
   },
   "dependencies": {
@@ -71,6 +78,9 @@
     "opn": "^5.4.0",
     "optimize-css-assets-webpack-plugin": "^5.0.1",
     "semantic-ui": "^2.4.2",
+    "stylelint": "^9.10.1",
+    "stylelint-config-recommended": "^2.1.0",
+    "stylelint-config-standard": "^18.2.0",
     "ts-jest": "^23.10.5",
     "tslint": "^5.12.1",
     "tslint-config-airbnb": "^5.11.1",
