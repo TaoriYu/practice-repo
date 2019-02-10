@@ -1,5 +1,6 @@
 /* tslint:disable:file-name-casing */
 import 'reflect-metadata';
+import DevTools from 'mobx-react-devtools';
 import { NextComponentType, NextContext } from 'next';
 import * as React from 'react';
 import App, { Container } from 'next/app';
@@ -43,6 +44,7 @@ export default class CustomApp extends App {
 
     return (
       <Container>
+        { process.env.NODE_ENV === 'development' && <DevTools /> }
         <Component {...pageProps} />
       </Container>
     );
