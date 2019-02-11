@@ -1,8 +1,8 @@
 import 'reflect-metadata';
 import { injectable, postConstruct } from 'inversify';
+import { mergeDeep } from '../../../utils/fn/mergeDeep';
 import { ICompiledConfiguration, TCompiledConfigFields, TReturnConfigGroup } from '../types/internals';
 import { IConfigurationAdapter } from './adapters';
-import merge from 'lodash/merge';
 
 type TAdapterPriorities = 0 | 1 | 2 | 3 | 4 | 5;
 
@@ -61,7 +61,7 @@ export class ConfigurationService<D extends TReturnConfigGroup<D>> implements IC
     for (const { adapter } of this.adapters) {
       const result = await adapter.get();
       if (result) {
-        merge(configurationToFill, result);
+        mergeDeep(configurationToFill, result);
       }
     }
 

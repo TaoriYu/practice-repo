@@ -1,6 +1,6 @@
-import random from 'lodash/random';
 import { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { injectable, unmanaged } from 'inversify';
+import { random } from '../../utils/fn/random';
 import { log, Logger } from '../logger';
 
 export type TRunConfiguration =
@@ -39,7 +39,7 @@ export class Api<DtoClass, ErrorDtoClass = {}> {
   private static generateCustomConfigProps() {
     return {
       requestStartAt: new Date().toISOString(),
-      requestUniqueId: random(1000, 10000),
+      requestUniqueId: random(10000, 1000),
     };
   }
 

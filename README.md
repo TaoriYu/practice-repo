@@ -1,10 +1,15 @@
-# Шаблон React микросервиса
+# Frontend National Material Page.
 Про соглашения и рекомендации по разработке react приложений **нужно** почитать в confluence.<br>
 Язык коментариев и коммитов: Русский.<br>
 Оступ: 2 **пробела**.<br>
 
+**Эпик**: https://jira.corp.tass.ru/browse/TMRED-1972
+
+**Макеты**: https://app.zeplin.io/project/5c5d46a821ae342cd2987966/dashboard
+
+Репозиторий для страницы материала по проекту "Нацпроекты".
+
 ## Содержание
-- [Создание нового микросервиса](#make-new-microservice)
 - [Запуск](#start)
 - [Необходимые глобальные зависимости](#global-deps)
 - [Что из технологий используется](#usages)
@@ -27,19 +32,6 @@
   - [hygen config](#hygen-config)
   - [Я хочу добавить свой шаблон!](#custom-template)
 - [Создание коммитов](#commit-creation)
-
-<a name="make-new-microservice"></a>
-## Создание нового микросервиса
-Для того что-бы развернуть новый микросервис нужно:
-1. Склонировать репозиторий [шаблона](https://bitbucket.corp.tass.ru/projects/TASS/repos/react-microservice-template)
-и удалить из него все ветки кроме **master**
-2. Создать новый репозиторий в названии репозитория указать назавние проекта по шаблону '_*-frontend_' пример: 
-*tass-com-frontend*
-3. перейти в клон из п1 и выполнить git remote remove origin
-4. git remote add origin (урл который получили в п2)
-5. Если используете git-flow необходимо создать ветку develop и выбрать ее в настройках как default branch
-7. Поменять поле name в package.json c _template-app_ на название репозитория
-8. закомитить изменения
 
 <a name="start"></a>
 ## Запуск
@@ -73,7 +65,7 @@
 - [Jest](https://jestjs.io/) - Фреймворк для тестирования.
 - [Commitizen](https://github.com/commitizen/cz-cli) - Генератор комитов.
 - [Commitlint](https://github.com/marionebl/commitlint) - Линтер для комитов.
-- [Mobx](https://mobx.js.org) - Для управления состоянием приложения.
+- [Mobx](https://mobx.js.org) - **версия 4** Для управления состоянием приложения.
 - [Mobx-React](https://github.com/mobxjs/mobx-react) - Mobx в React
 - [React](https://reactjs.org) - Очень умный шаблонизатор.
 

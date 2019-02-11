@@ -1,4 +1,4 @@
-import random from 'lodash/random';
+import { random } from '../../../utils/fn/random';
 import { log } from '../../logger';
 import { provideSingleton } from '../../provider';
 import { ConfigurationService } from './configurationService';
@@ -10,7 +10,7 @@ export class RuntimeSettings {
   private log = log('RuntimeSettings');
   private mutex = false;
   /* for preventing instance duplicating */
-  private uniqueServiceId = random(1000, 10000);
+  private uniqueServiceId = random(10000, 1000);
 
   public async enableRuntime() {
     if (!process.env.IS_SERVER) { return undefined; }
