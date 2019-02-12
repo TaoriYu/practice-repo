@@ -1,4 +1,3 @@
-import DevTools from 'mobx-react-devtools';
 import * as React from 'react';
 import NextHead from 'next/head';
 import { ConfigExposer } from './ConfigExposer';
@@ -15,7 +14,6 @@ interface IHeadProps {
 export function Head({ description, ogImage, ogUrl, title }: IHeadProps) {
   return (
     <NextHead>
-      { process.env.NODE_ENV === 'development' && <DevTools /> }
       <title>{title}</title>
       <ConfigExposer />
       <Meta description={description} />
