@@ -131,6 +131,24 @@
 <a name="css-usage-classNames"></a>
 ### Использование classNames
 Для мерджа стилей используем библиотеку classNames
+
+```typescript jsx
+import { PureComponent } from 'react';
+import classNames from 'classnames';
+import styles from './submit-button.css';
+
+export default class SubmitButton extends PureComponent {
+  render () {
+    return (
+      <button className={classNames(styles.firstClass, styles.secondClass)}>
+        Войти
+      </button>
+    );
+  }
+};
+```
+
+Если несколько классов зависят от различных условий
 ```typescript jsx
 import { PureComponent } from 'react';
 import classNames from 'classnames/bind';
