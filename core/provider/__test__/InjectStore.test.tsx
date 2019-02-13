@@ -6,7 +6,7 @@ import { makeStore } from '../makeStore';
 describe('inject store test suite', () => {
   test('should inject store into component', () => {
     function Component(props: { store: any }) {
-      return ( <div>{ props.store.text() }</div> );
+      return (<div>{ props.store.text() }</div>);
     }
 
     const mockFn = jest.fn(() => 'test');

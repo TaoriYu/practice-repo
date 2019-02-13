@@ -5,23 +5,27 @@ const { PHASE_PRODUCTION_SERVER } =
     ? require('next/constants') // Get values from `next` package when building locally
     : require('next-server/constants'); // Get values from `next-server` package when building on now v
 
-module.exports = (phase, { defaultConfig }) => {
+module.exports = (phase) => {
   if (phase === PHASE_PRODUCTION_SERVER) {
     return {};
   }
 
   const withTypescript = require('./core/build/withTypescript');
-  const withCSS = require('@zeit/next-css');
+  // less also could compile css;
+  const withLESS = require('./core/build/withLess');
 
-  return withTypescript(withCSS({
-    cssModules: 'global',
+  return withTypescript(withLESS(Object.assign({}, makeCssConfig(), customs())));
+};
+
+function makeCssConfig() {
+  return {
+    cssModules: 'global', // enabling modules in global scope
     cssLoaderOptions: {
       importLoaders: 1,
       localIdentName: "[name]_[local]__[hash:base64:5]",
     },
-    ...customs(),
-  }));
-};
+  }
+}
 
 function customs() {
   const webpack = require('webpack');
@@ -54,6 +58,17 @@ function customs() {
         if (process.env.NODE_ANALYZE) {
           config.plugins.push(new BundleAnalyzerPlugin());
         }
+      }
+      if (process.env.NODE_ENV === 'production') {
+        const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+        config.plugins.push(new OptimizeCssAssetsPlugin({
+          assetNameRegExp: /\.css$/g,
+          cssProcessor: require('clean-css'),
+          cssProcessorPluginOptions: {
+            preset: ['default', { discardComments: { removeAll: true } }],
+          },
+          canPrint: true
+        }))
       }
       return config
     },

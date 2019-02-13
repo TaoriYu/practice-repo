@@ -28,7 +28,7 @@ interface IExtendedAxiosRequestConfig extends AxiosRequestConfig {
  * }
  */
 @injectable()
-export class Api<DtoClass> {
+export class Api<DtoClass, ErrorDtoClass = {}> {
   public readonly api: AxiosInstance;
   /**
    * run with: evn DEBUG=App:Api:* npm run dev  - to debug on the server
@@ -64,7 +64,7 @@ export class Api<DtoClass> {
       });
     } catch (e) {
       this.errorLogger(e, customs.requestUniqueId);
-      throw e;
+      throw e as ErrorDtoClass;
     }
   }
 

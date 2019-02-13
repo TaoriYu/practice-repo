@@ -1,0 +1,13 @@
+{
+  "extends": ["stylelint-config-recommended", "stylelint-config-standard"],
+  "rules": {
+    "selector-pseudo-class-no-unknown": [true, {
+      "ignorePseudoClasses": ["global", "local"]
+    }],
+    "color-hex-length": null,
+    "selector-list-comma-newline-after": null,
+    "selector-list-comma-space-after": "always",
+    "media-query-list-comma-newline-after": null,
+    "string-quotes": "single"
+  }
+}
