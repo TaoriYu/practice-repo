@@ -6,6 +6,7 @@ import * as React from 'react';
 import App, { Container } from 'next/app';
 import { log } from '../core/logger';
 import { Ignition } from '../ignition';
+import DevTools from 'mobx-react-devtools';
 
 interface IInitialPropsArgs {
   ctx: NextContext;
