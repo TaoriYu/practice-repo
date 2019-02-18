@@ -5,6 +5,7 @@ import * as React from 'react';
 import App, { Container } from 'next/app';
 import { log } from '../core/logger';
 import { Ignition } from '../ignition';
+import DevTools from 'mobx-react-devtools';
 
 interface IInitialPropsArgs {
   ctx: NextContext;
@@ -43,6 +44,7 @@ export default class CustomApp extends App {
 
     return (
       <Container>
+        { process.env.NODE_ENV === 'development' && <DevTools /> }
         <Component {...pageProps} />
       </Container>
     );
