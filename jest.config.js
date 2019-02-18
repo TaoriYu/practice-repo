@@ -5,6 +5,9 @@ module.exports = {
   testPathIgnorePatterns: [
     '.*\.mock\.(tsx?|jsx?)'
   ],
+  moduleNameMapper: {
+    "\.(css|less)$": "identity-obj-proxy"
+  },
   setupFiles: [
     './utils/tests/polyfills.ts',
     './utils/tests/configMock.ts',
