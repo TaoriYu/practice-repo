@@ -9,10 +9,12 @@ export class <%= h.ucFirst(name) %>Dto {
   public id: string = '';
 
   /** дата обновления */
+  @Expose
   @Type(() => Date)
   public updatedAt: Date = new Date();
 
   /** дата создания */
+  @Expose
   @Type(() => Date)
   public createdAt: Date = new Date();
 }
