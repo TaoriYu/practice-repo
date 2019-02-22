@@ -9,6 +9,7 @@ export class <%= h.ucFirst(name) %> {
   public id: string = '';
 
   /** дата обновления */
+  @Expose
   @Type(() => Date)
   public updatedAt: Date = new Date();
 
