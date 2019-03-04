@@ -4,7 +4,7 @@ import { injectable, unmanaged } from 'inversify';
 import { log, Logger } from '../logger';
 
 export type TRunConfiguration =
-  OmitKeys<AxiosRequestConfig, 'transformResponse' | 'adapter' | 'method' | 'url' | 'baseURL'>;
+  OmitKeys<AxiosRequestConfig, 'transformResponse' | 'adapter' | 'method' | 'baseURL'>;
 
 interface IExtendedAxiosRequestConfig extends AxiosRequestConfig {
   requestStartAt: Date;
@@ -70,9 +70,13 @@ export class Api<DtoClass, ErrorDtoClass = {}> {
 
   private errorLogger(error: AxiosError, id: number) {
     const errorType = error.response ? 'Response' : error.request ? 'Request' : 'Unrecognised';
+    const url = errorType === 'Response' ? error.response!.config.url : error.request._options.path;
     const errorLog
       = `\n=========== error ${id} ==========\n`
       + `  ${errorType} error\n`
+      + `  url: ${url}\n`
+      + `  code: ${errorType === 'Response' ? error.response!.status : '418'}\n`
+      + `  err_code: ${error.code}\n`
       + `  Message: ${error.message}\n`
       + `  Stack: ${error.stack}\n`
       + `  Additional data: %O\n`
@@ -107,7 +111,7 @@ export class Api<DtoClass, ErrorDtoClass = {}> {
       = `\n=========== response ${requestUniqueId} ==========\n`
       + `  url: ${url}\n`
       + `  headers: %O\n`
-      + `  data: %O\n`
+      + `  data: %j\n`
       + `  cfg: %O\n`
       + `  request execution time: ${execTime}ms\n`
       + `================= end =================\n`;
