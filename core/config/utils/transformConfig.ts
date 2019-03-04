@@ -40,7 +40,8 @@ export function transform<Fields extends TReturnConfigGroup<Fields>, T extends I
   cfgPart: T,
   cfgPartName: keyof Fields,
 ): ICompiledConfiguration<TMakeCompiled<Fields>> {
-  const env = (process.env.NODE_ENV || 'dev') as RequiredEnv | OptionalEnv;
+  const env =
+    (process.env.CONFIG_ENV || process.env.NODE_ENV || 'dev') as RequiredEnv | OptionalEnv;
 
   return Object.keys(cfgPart).reduce(
     (acc, val: keyof T) => {

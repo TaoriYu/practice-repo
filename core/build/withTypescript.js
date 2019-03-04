@@ -1,3 +1,5 @@
+const isProd = process.env.NODE_ENV === 'production';
+
 module.exports = (nextConfig = {}) => {
   if (!nextConfig.pageExtensions) {
     nextConfig.pageExtensions = ['jsx', 'js']
@@ -27,9 +29,9 @@ module.exports = (nextConfig = {}) => {
         )
       }
 
-      const { dir, defaultLoaders, dev, isServer } = options
+      const { dir, defaultLoaders, dev, isServer } = options;
 
-      config.resolve.extensions.push('.ts', '.tsx')
+      config.resolve.extensions.push('.ts', '.tsx', '.js', '.jsx');
 
       // Backwards compatibility with older versions of Next.js.
       // Next.js will automatically apply hot-self-accept-loader for all extensions in `pageExtensions`
@@ -47,9 +49,9 @@ module.exports = (nextConfig = {}) => {
         }
       }
       config.module.rules.push({
-        test: /\.(ts|tsx)$/,
+        test: /\.(tsx?|jsx?)$/,
         include: [dir],
-        exclude: /node_modules/,
+        exclude: isProd ? undefined : /node_modules/,
         use: [{
           loader: 'ts-loader',
           options: {

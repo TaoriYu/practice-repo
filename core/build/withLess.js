@@ -32,6 +32,12 @@ module.exports = (nextConfig = {}) => {
         ]
       })
 
+      if (process.env.NODE_ENV !== 'production') {
+        options.defaultLoaders.less = options.defaultLoaders.less.filter((l) => {
+          return l.loader !== 'postcss-loader';
+        });
+      }
+
       config.module.rules.push({
         test: /\.(less|css)$/,
         use: options.defaultLoaders.less
