@@ -1,4 +1,4 @@
-import random from 'lodash/random';
+import { random } from '../../../utils/fn';
 import { log } from '../../logger';
 import { provideSingleton } from '../../provider';
 import { ConfigurationService } from './configurationService';

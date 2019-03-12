@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { injectable, postConstruct } from 'inversify';
 import { ICompiledConfiguration, TCompiledConfigFields, TReturnConfigGroup } from '../types/internals';
 import { IConfigurationAdapter } from './adapters';
-import merge from 'lodash/merge';
+import { merge } from 'ramda';
 
 type TAdapterPriorities = 0 | 1 | 2 | 3 | 4 | 5;
 
@@ -56,12 +56,12 @@ export class ConfigurationService<D extends TReturnConfigGroup<D>> implements IC
    * erase configuration from lower priority adapters
    */
   public async update() {
-    const configurationToFill = this.getFullConfig();
+    let configurationToFill = this.getFullConfig();
 
     for (const { adapter } of this.adapters) {
       const result = await adapter.get();
       if (result) {
-        merge(configurationToFill, result);
+        configurationToFill = merge(configurationToFill, result);
       }
     }
 
