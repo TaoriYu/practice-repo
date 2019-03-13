@@ -7,6 +7,9 @@ import { TRequestMethod } from '../bindings/bindApiService';
 import { errorResponseInterceptor, responseInterceptor } from './interceptors';
 import { makeAxiosInstance } from './makeAxiosInstance';
 
+/**
+ * @deprecated
+ */
 export function apiFactory(context: interfaces.Context) {
   // cause it singleton
   const configurationService = context.container.get(AppConfigurationService);
