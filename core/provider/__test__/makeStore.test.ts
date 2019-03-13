@@ -11,12 +11,4 @@ describe('make store test suite', () => {
     store.property = true;
     expect(container.get(Store).property).toBeTruthy();
   });
-
-  test('should bin class in normal score', () => {
-    @makeStore(Store, { singletonScope: false })
-    class Store { public property = false; }
-    const store = container.get(Store);
-    expect(container.get(Store)).not.toBe(store);
-    expect(container.get(Store)).toBeInstanceOf(Store);
-  });
 });
