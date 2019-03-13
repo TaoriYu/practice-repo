@@ -1,122 +1,131 @@
-import random from 'lodash/random';
-import { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { injectable, unmanaged } from 'inversify';
-import { log, Logger } from '../logger';
-
-export type TRunConfiguration =
-  OmitKeys<AxiosRequestConfig, 'transformResponse' | 'adapter' | 'method' | 'baseURL'>;
-
-interface IExtendedAxiosRequestConfig extends AxiosRequestConfig {
-  requestStartAt: Date;
-  requestUniqueId: number;
-}
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, CancelTokenSource } from 'axios';
+import { observable } from 'mobx';
+import { fromPromise } from 'mobx-utils';
+import { random } from '../../utils/fn';
+import { BaseAPi } from './baseApi';
+import { EApiState, TRunConfiguration } from './inrefaces';
+import { IOApiConfig } from './oApiFactory';
+import { call, map, propOr, identity, prop } from 'ramda';
+import invariant from 'invariant';
 
 /**
- * Class for working with http API, provide and instantiate axios instance from application
- * configuration
- * @see Transit
+ * Абстракция над AXIOS для работы с HTTP-API, преднастроеным из AppConfig
+ * Для создания инстанса Api используются хэлперы apiFactory и OApiFactory
+ * @see OApiFactory см для подробностей
+ * @see apiFactory - deprecated
  * @example
- * class MyHttpRequester extends Api {
- *   public async getData(): IncomingSomeDTO {
- *     const response = await this.api.get('/data');
- *     return this.toDTO(IncomingSomeDTO, response.data);
- *   }
- *
- *   public async saveData(params: any): void {
- *     await this.api.post('/data', this.toDTO(OutgoingSomeDTO, params))
- *   }
+ * class MyStore {
+ *   public getArticleData = OApiFactory({ // configuration here // }) // <- creates api instance
  * }
+ * // somewhere in the app
+ * container.get(MyStore).getArticleData.observe()
  */
-@injectable()
-export class Api<DtoClass, ErrorDtoClass = {}> {
-  public readonly api: AxiosInstance;
+export class Api<DtoClass, ErrorDtoClass = {}> extends BaseAPi {
   /**
-   * run with: evn DEBUG=App:Api:* npm run dev  - to debug on the server
-   * and use localStorage.debug = "Api:*"  - to debug on the client
+   * state запроса.
    */
-  private apiDebug: Logger;
+  @observable public state: EApiState = EApiState.idle;
+  public value?: AxiosResponse<DtoClass>;
+  public errorValue?: AxiosResponse<ErrorDtoClass>;
+  public OApiConfig?: IOApiConfig<any, any>;
+  private requestToken?: CancelTokenSource;
 
+  /**
+   * Метки для идентификации реквеста, и измерения длительности.
+   */
   private static generateCustomConfigProps() {
     return {
       requestStartAt: new Date().toISOString(),
-      requestUniqueId: random(1000, 10000),
+      requestUniqueId: random(10000, 1000),
     };
   }
 
-  public constructor(
-    @unmanaged() keyOrInstance: AxiosInstance,
-  ) {
-    this.api = keyOrInstance as AxiosInstance;
-    this.api.interceptors.request.use(this.requestLogger);
-    this.api.interceptors.response.use(this.responseLogger);
-    this.apiDebug = log(`Api:${this.api.defaults.baseURL}/${this.api.defaults.url}`);
-  }
-
   /**
-   * Runs configured request
+   * Запускает реквест в "сыром виде".
+   * метод run предоставляет возможность програмно управлять процессом выполнения запроса.
+   * игнорирует конфигурацию из OApiFactory, необходимо конфигурировать вручную.
    */
   public async run(config: TRunConfiguration) {
     const customs = Api.generateCustomConfigProps();
     try {
-      return await this.api.request<DtoClass>({
-        ...config,
-        ...customs,
-      });
+      return await this.api.request<DtoClass>({ ...config, ...customs });
     } catch (e) {
       this.errorLogger(e, customs.requestUniqueId);
-      throw e as ErrorDtoClass;
+      throw e as AxiosError;
     }
   }
 
-  private errorLogger(error: AxiosError, id: number) {
-    const errorType = error.response ? 'Response' : error.request ? 'Request' : 'Unrecognised';
-    const url = errorType === 'Response' ? error.response!.config.url : error.request._options.path;
-    const errorLog
-      = `\n=========== error ${id} ==========\n`
-      + `  ${errorType} error\n`
-      + `  url: ${url}\n`
-      + `  code: ${errorType === 'Response' ? error.response!.status : '418'}\n`
-      + `  err_code: ${error.code}\n`
-      + `  Message: ${error.message}\n`
-      + `  Stack: ${error.stack}\n`
-      + `  Additional data: %O\n`
-      + `=============== end ===============\n`;
-    this.apiDebug.error(errorLog, error.response || {});
+  /**
+   * Запускает сконфигурированный при помощи OApiFactory запрос.
+   * Возвращает "PromiseLike" Observable работа почти ни чем не отличается от Promise за исключением
+   * отсутствия метода catch.
+   * @see fromPromise
+   */
+  public observe = (config: AxiosRequestConfig = {}) => {
+    invariant(this.OApiConfig, 'Couldn\'t observe request. Your API class created by' +
+      'old version of APIFactory, or OApiConfiguration didn\'t provided.' +
+      'please use new OApiFactory instead');
+
+    this.regenerateToken();
+    this.clearState();
+    const customConfigFields = Api.generateCustomConfigProps();
+    const axiosConfig: AxiosRequestConfig = {
+      cancelToken: this.requestToken!.token,
+      ...config,
+      params: this.getOApiParams(),
+      data: this.getOApiData(),
+      ...customConfigFields,
+    };
+
+    const fetchObserver = fromPromise(this.api.request<DtoClass>(axiosConfig));
+
+    fetchObserver.then(
+      this.handleOApiSuccess,
+      this.handleOApiError(customConfigFields.requestUniqueId),
+    );
+
+    return fetchObserver;
   }
 
-  private requestLogger = (config: AxiosRequestConfig) => {
-    const {
-      timeout, baseURL, headers, data, method, params, url, requestUniqueId, requestStartAt,
-    } = config as IExtendedAxiosRequestConfig;
-    const requestLog
-      = `\n=========== request ${requestUniqueId} ==========\n`
-      + `  baseUrl: ${baseURL}\n`
-      + `  url: ${url}\n`
-      + `  params: %o\n`
-      + `  method: ${method}\n`
-      + `  timeout: ${timeout}\n`
-      + `  headers: %O\n`
-      + `  data: %O\n`
-      + `  request start at: ${requestStartAt}\n`
-      + `=============== end ===============\n`;
-    this.apiDebug.debug(requestLog, params, headers, data);
-
-    return config;
+  private handleOApiError = (requestId: number) => (e: AxiosError) => {
+    const errorResponse = e.response ? e.response : undefined;
+    this.state = EApiState.rejected;
+    this.errorValue = errorResponse;
+    if (this.OApiConfig && this.OApiConfig.onError) {
+      this.OApiConfig.onError(prop('data', errorResponse!));
+    }
+    this.errorLogger(e, requestId);
   }
 
-  private responseLogger = (response: AxiosResponse) => {
-    const { url, requestUniqueId, requestStartAt } = response.config as IExtendedAxiosRequestConfig;
-    const execTime = (new Date().getTime() - new Date(requestStartAt).getTime());
-    const responseLog
-      = `\n=========== response ${requestUniqueId} ==========\n`
-      + `  url: ${url}\n`
-      + `  headers: %O\n`
-      + `  data: %j\n`
-      + `  cfg: %O\n`
-      + `  request execution time: ${execTime}ms\n`
-      + `================= end =================\n`;
-    this.apiDebug.debug(responseLog, response.headers, response.data, response.config);
+  private handleOApiSuccess = (data: AxiosResponse<DtoClass>) => {
+    this.value = data;
+    this.state = EApiState.fulfilled;
+    this.requestToken = undefined;
+    call(propOr(identity, 'setter', this.OApiConfig!), this.value.data);
+  }
 
-    return response;
+  private regenerateToken() {
+    if (this.requestToken) {
+      this.apiDebug.warn('attempt to cancel duplicated request');
+      // TODO enable after testing
+      // this.requestToken.cancel('Canceled because new request has arrived');
+      this.requestToken = axios.CancelToken.source();
+    } else {
+      this.requestToken = axios.CancelToken.source();
+    }
+  }
+
+  private clearState() {
+    this.value = undefined;
+    this.errorValue = undefined;
+    this.state = EApiState.pending;
+  }
+
+  private getOApiParams() {
+    return map(call, propOr({}, 'params', this.OApiConfig!));
+  }
+
+  private getOApiData() {
+    return map(call, propOr({}, 'data', this.OApiConfig!));
   }
 }
