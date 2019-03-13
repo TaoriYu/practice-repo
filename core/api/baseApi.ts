@@ -4,12 +4,13 @@ import { errorLogMsg, requestLogMsg, responseLogMsg } from './apiLogMsg';
 import { EApiErrorTypes, IExtendedAxiosRequestConfig } from './inrefaces';
 
 export abstract class BaseAPi {
+
+  public readonly api: AxiosInstance;
   /**
    * run with: evn DEBUG=App:*:Api:* npm run dev  - to debug on the server
    * and use localStorage.debug = "App:*:Api:*"  - to debug on the client
    */
   protected readonly apiDebug: Logger;
-  protected readonly api: AxiosInstance;
 
   public constructor(
     keyOrInstance: AxiosInstance,
