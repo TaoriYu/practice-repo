@@ -4,7 +4,6 @@ import 'reflect-metadata';
 import '../components/uiKit/Less/notImportedGlobals.less';
 import DevTools from 'mobx-react-devtools';
 import App, { Container, NextAppContext } from 'next/app';
-import Error from 'next/error';
 import { log, enableLogger } from '../core/logger';
 import { Ignition } from '../ignition';
 
@@ -37,7 +36,7 @@ export default class CustomApp extends App<IAppProps> {
       ctx.pathname, ctx.asPath, ctx.query, componentName,
     );
 
-    if (componentName === 'Error') {
+    if (ctx.pathname === '/_error') {
       return { pageProps, statusCode };
     }
 
@@ -77,8 +76,7 @@ export default class CustomApp extends App<IAppProps> {
     const result = (
       <Container>
         {process.env.NODE_ENV === 'development' && <DevTools />}
-        {!preventRender && <Component {...pageProps} />}
-        {preventRender && <Error {...pageProps} />}
+        <Component {...pageProps} statusCode={statusCode} />
       </Container>
     );
     logger.info('Request is successfully finished 🎆');
