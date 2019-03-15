@@ -1,17 +1,21 @@
-import * as apis from './api';
+import * as externalApi from './externalApi';
+import * as internalApi from './internalApi';
 import { IConfig, composeTransformations } from '../core/config';
 import { IConfigFields } from './config.interface';
 
 const defaultConfig: IConfig<IConfigFields> = {
   publicRuntimeConfig: {
-    apis: {},
+    internalApi: {},
+    externalApi: {},
   },
   serverRuntimeConfig: {
-    apis: {},
+    internalApi: {},
+    externalApi: {},
   },
 };
 
 export const appConfig = composeTransformations(
   defaultConfig,
-  [apis, 'apis'],
+  [externalApi, 'externalApi'],
+  [internalApi, 'internalApi'],
 );

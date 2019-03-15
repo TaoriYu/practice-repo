@@ -49,10 +49,12 @@ export function requestLogMsg(args: IRequestLogArgs) {
 }
 
 export function responseLogMsg(requestUniqueId: number, url?: string, execTime?: number) {
+  const dataFormatModifier = process.env.IS_SERVER ? '%j' : '%O';
+
   return `\n=========== response ${requestUniqueId} ==========\n`
     + `  url: ${url}\n`
     + `  headers: %O\n`
-    + `  data: %j\n`
+    + `  data: ${dataFormatModifier}\n`
     + `  cfg: %O\n`
     + `  request execution time: ${execTime}ms\n`
     + `================= end =================\n`;

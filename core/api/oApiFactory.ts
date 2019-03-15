@@ -1,7 +1,9 @@
-import * as apis from '../../config/api';
+import * as apis from '../../config/externalApi';
 import axios, { AxiosResponse } from 'axios';
-import { AppConfigurationService } from '../../config';
+import { path } from 'ramda';
+import { AppConfigurationService, IConfigFields } from '../../config';
 import { errorResponseInterceptor, responseInterceptor } from '../../di/utils/interceptors';
+import { log } from '../logger';
 import { container } from '../provider/container';
 import { Api } from './api';
 
@@ -59,7 +61,7 @@ const defaultParams: Partial<IOApiConfig<any, any>> = {
  *   public getArticleData = OApiFactory<ArticleDto>({
  *     configKey: 'articleApi', // отсюда получаем host protocol port и прочее
  *     method: 'GET',
- *     endpoint: '/v1/getArticle'
+ *     endpoint: () => '/v1/getArticle', // будет вызвана при вызове метода observe
  *     dto: ArticleDto, // ответ будет в виде ArticleDto
  *     errorDto: ArticleErrorDto, // ответ с кодом не 2ХХ будет в виде ArticleErrorDto
  *     setter: (article) => this.article = article; // когда запрос отработает вызовется setter и установит значение в store
@@ -113,6 +115,8 @@ export function OApiFactory<
       try {
         return JSON.parse(rawData || '{}');
       } catch (e) {
+        log('Net').error(`couldn't parse response data when executing: ${url}`);
+
         return {};
       }
     }],
@@ -128,6 +132,10 @@ export function OApiFactory<
   return apiInstance;
 }
 
-function getApiFromConfig(key: keyof typeof apis) {
-  return container.get(AppConfigurationService).publicRuntimeConfig.apis[key];
+function getApiFromConfig(key: keyof IConfigFields['internalApi']) {
+  const apiPath = process.env.IS_SERVER
+    ? ['serverRuntimeConfig', 'internalApi', key]
+    : ['publicRuntimeConfig', 'externalApi', key];
+
+  return path(apiPath, container.get(AppConfigurationService));
 }

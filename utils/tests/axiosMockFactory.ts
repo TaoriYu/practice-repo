@@ -30,7 +30,7 @@ export function axiosMockFactory<D extends object = {}>(
   type: boolean = true,
 ): AxiosInstance {
   const configService = container.get(AppConfigurationService);
-  const { defaultApi } = configService.publicRuntimeConfig.apis;
+  const { defaultApi } = configService.publicRuntimeConfig.internalApi;
 
   let adapter: Adapter<D>;
 

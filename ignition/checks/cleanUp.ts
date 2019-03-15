@@ -1,11 +1,13 @@
 import { NextContext } from 'next';
-import { container } from '../../core/provider/container';
+import { provide } from '../../core/provider';
 import { StoreStore } from '../../core/provider/store.store';
+import { container } from '../../di/container';
 import { ICheck } from '../interfaces';
 
 /**
  * Clear stores data must be first check in ignition
  */
+@provide(CleanUp)
 export class CleanUp implements ICheck {
 
   public constructor(
@@ -18,7 +20,7 @@ export class CleanUp implements ICheck {
 
   public async serverSide(ctx: NextContext): Promise<object> {
     this.storeStore.stores.forEach(({ name, constructor }) => {
-      container.rebind(name).to(constructor);
+      container.rebind(name).to(constructor).inSingletonScope();
     });
 
     return {};

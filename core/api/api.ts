@@ -68,9 +68,11 @@ export class Api<DtoClass, ErrorDtoClass = {}> extends BaseAPi {
 
     this.regenerateToken();
     this.clearState();
+
     const customConfigFields = Api.generateCustomConfigProps();
     const axiosConfig: AxiosRequestConfig = {
       cancelToken: this.requestToken!.token,
+      url: this.refreshUrl(),
       ...config,
       params: this.getOApiParams(),
       data: this.getOApiData(),
@@ -85,6 +87,12 @@ export class Api<DtoClass, ErrorDtoClass = {}> extends BaseAPi {
     );
 
     return fetchObserver;
+  }
+
+  private refreshUrl() {
+    return typeof this.OApiConfig!.endpoint === 'function'
+      ? this.OApiConfig!.endpoint()
+      : this.OApiConfig!.endpoint;
   }
 
   private handleOApiError = (requestId: number) => (e: AxiosError) => {

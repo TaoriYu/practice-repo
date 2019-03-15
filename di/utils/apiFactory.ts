@@ -18,7 +18,7 @@ export function apiFactory(context: interfaces.Context) {
 }
 
 interface IApiFactoryCfg<D, E> {
-  apicfg?: keyof IConfigFields['apis'];
+  apicfg?: keyof IConfigFields['internalApi'];
   method?: TRequestMethod;
   endpoint?: string;
   dto: ClassType<D>;
@@ -27,14 +27,14 @@ interface IApiFactoryCfg<D, E> {
 
 type TNewArgsFn = <D, E = {}>(config: IApiFactoryCfg<D, E>) => Api<D, E>;
 type TOldArgsFn = <D, E = {}>(
-  cfgOrArgs: keyof IConfigFields['apis'],
+  cfgOrArgs: keyof IConfigFields['internalApi'],
   method: TRequestMethod,
   endpoint: string,
   dto: ClassType<D>,
   errorDto?: ClassType<E>,
 ) => Api<D, E>;
 type TNewMergedArgsFn = <D, E = {}>(
-  cfgOrArgs: keyof IConfigFields['apis'] | IApiFactoryCfg<D, E>,
+  cfgOrArgs: keyof IConfigFields['internalApi'] | IApiFactoryCfg<D, E>,
   method?: TRequestMethod,
   endpoint?: string,
   dto?: ClassType<D>,
@@ -45,7 +45,7 @@ export function newDesignedFactory(c: AppConfigurationService): TNewArgsFn;
 export function newDesignedFactory(c: AppConfigurationService): TOldArgsFn;
 export function newDesignedFactory(c: AppConfigurationService): TNewMergedArgsFn {
   return <D, E = {}>(
-    cfgOrArgs: keyof IConfigFields['apis'] | IApiFactoryCfg<D, E>,
+    cfgOrArgs: keyof IConfigFields['internalApi'] | IApiFactoryCfg<D, E>,
     method?: TRequestMethod,
     endpoint?: string,
     dto?: ClassType<D>,
