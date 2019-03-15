@@ -72,14 +72,13 @@ export default class CustomApp extends App<IAppProps> {
 
     if (preventRender) {
       logger.error(`Request is finished with error ${statusCode} 💥`);
-
-      return <Error statusCode={statusCode} />;
     }
 
     const result = (
       <Container>
         {process.env.NODE_ENV === 'development' && <DevTools />}
-        <Component {...pageProps} />
+        {!preventRender && <Component {...pageProps} />}
+        {preventRender && <Error {...pageProps} />}
       </Container>
     );
     logger.info('Request is successfully finished 🎆');
