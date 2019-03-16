@@ -1,9 +1,12 @@
+import { NextAppContext } from 'next/app';
 import * as checks from './checks';
 import { log } from '../core/logger';
 import { container } from '../di/container';
 
 import { NextContext } from 'next';
-import { TCheck } from './interfaces';
+import { TCheck, TPagesValidator, TPathsValidator } from './interfaces';
+import { ifElse, equals, is, test, flip, prop, propOr, any, empty } from 'ramda';
+import invariant from 'invariant';
 
 /**
  * Отвечает за первоначальную загрузку приложения. Позволяет передавать данные с клиента
@@ -18,13 +21,15 @@ import { TCheck } from './interfaces';
  * @see RuntimeSettingsCheck - as example
  */
 export class Ignition {
-  private readonly context: any;
+  private readonly context?: NextContext;
+  private readonly component?: NextAppContext['Component'];
   private readonly checks: TCheck[];
   private readonly log = log('Ignition');
 
-  public constructor(ctx?: NextContext) {
+  public constructor(appContext?: NextAppContext) {
     this.checks = Object.keys(checks).map((key) => checks[key as keyof typeof checks]);
-    this.context = ctx;
+    this.context = prop('ctx', appContext!);
+    this.component = prop('Component', appContext!);
   }
 
   /**
@@ -42,8 +47,20 @@ export class Ignition {
   public bind<T extends object>(derivedData: T) {
     if (!process.env.IS_SERVER) {
       this.checks.forEach((check) => {
+        const {
+          excludePaths = [],
+          includePaths = [],
+          excludePages = [],
+          includePages = [],
+        } = check;
+
         try {
-          container.get(check).clientSide(derivedData);
+          const isInPath = this.isPathApproach(excludePaths, includePaths);
+          const isInPage = this.isPagesApproach(excludePages, includePages);
+
+          if (isInPath || isInPage) {
+            container.get(check).clientSide(derivedData);
+          }
         } catch (e) {
           this.log.error(
             '=========== error ==========\n' +
@@ -63,8 +80,10 @@ export class Ignition {
   }
 
   private async derive() {
+    invariant(!!this.context, 'couldn\'t provide server side check without context');
+
     const derivedData: object = {};
-    const { res } = this.context;
+    const { res } = this.context!;
     for (const check of this.checks) {
       try {
         Object.assign(derivedData, await this.runCheck(check));
@@ -78,7 +97,9 @@ export class Ignition {
           check.name, e.message, e.stack,
         );
         // unexpected error here trying to 500;
-        res.statusCode = 500;
+        if (res) {
+          res.statusCode = 500;
+        }
       }
 
       if (res && (res.finished || res.statusCode !== 200)) {
@@ -94,11 +115,55 @@ export class Ignition {
     return derivedData;
   }
 
-  private runCheck(check: TCheck) {
-    if (process.env.IS_SERVER && this.context.res) {
-      return container.get(check).serverSide(this.context);
+  private async runCheck(check: TCheck) {
+    invariant(!!this.context, 'couldn\'t provide server side check without context');
+
+    if (process.env.IS_SERVER && this.context && this.context.res) {
+      const {
+        excludePaths = [],
+        includePaths = [],
+        excludePages = [],
+        includePages = [],
+      } = check;
+
+      const isInPath = this.isPathApproach(excludePaths, includePaths);
+      const isInPage = this.isPagesApproach(excludePages, includePages);
+      if (isInPath || isInPage) {
+        const checkInstance = container.get(check);
+
+        return checkInstance.serverSide(this.context);
+      }
+
+      return {};
     }
 
-    return undefined;
+    return {};
+  }
+
+  private isPathApproach(excludePaths: TPathsValidator, includePaths: TPathsValidator) {
+    const pathname = propOr('', 'pathanme', this.context);
+    const isInPath = any(ifElse(is(String), equals(pathname), flip(test)(pathname)));
+
+    if (isInPath(excludePaths)) {
+      return false;
+    }
+    if (!empty(includePaths) && !isInPath(includePaths)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private isPagesApproach(excludePages: TPagesValidator, includePages: TPagesValidator) {
+    const isInFn = any(equals<Function>(this.component!));
+
+    if (isInFn(excludePages)) {
+      return false;
+    }
+    if (!empty(includePages) && !isInFn(includePages)) {
+      return false;
+    }
+
+    return true;
   }
 }

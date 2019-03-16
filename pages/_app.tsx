@@ -19,8 +19,11 @@ export interface IAppProps {
 // tslint:disable-next-line:no-default-export
 export default class CustomApp extends App<IAppProps> {
 
-  public static async getInitialProps({ Component, ctx }: NextAppContext) {
+  public static async getInitialProps(appContext: NextAppContext) {
+    const { Component, ctx } = appContext;
+
     let pageProps = {};
+
     // тут и далее, если res нет - мы на клиенте
     const statusCode = ctx.res ? ctx.res.statusCode : 200;
     const componentName
@@ -41,7 +44,7 @@ export default class CustomApp extends App<IAppProps> {
     }
 
     try {
-      pageProps = await new Ignition(ctx).turnOn();
+      pageProps = await new Ignition(appContext).turnOn();
     } catch (e) {
       log('Ignition').error(
         'Ошибка во время исполнения Ignition checks', e,
