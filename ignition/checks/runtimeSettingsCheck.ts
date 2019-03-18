@@ -1,8 +1,8 @@
 import { AppConfigurationService } from '../../config';
 import { RuntimeSettings } from '../../core/config';
+import { ICheck } from '../../core/ignition';
 import { provide } from '../../core/provider';
 import { container } from '../../core/provider/container';
-import { ICheck } from '../interfaces';
 
 @provide(RuntimeSettingsCheck)
 export class RuntimeSettingsCheck implements ICheck {

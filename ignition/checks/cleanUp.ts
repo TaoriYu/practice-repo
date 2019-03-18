@@ -2,7 +2,7 @@ import { NextContext } from 'next';
 import { provide } from '../../core/provider';
 import { StoreStore } from '../../core/provider/store.store';
 import { container } from '../../di/container';
-import { ICheck } from '../interfaces';
+import { ICheck } from '../../core/ignition';
 
 /**
  * Clear stores data must be first check in ignition

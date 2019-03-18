@@ -5,7 +5,7 @@ import '../components/uiKit/Less/notImportedGlobals.less';
 import DevTools from 'mobx-react-devtools';
 import App, { Container, NextAppContext } from 'next/app';
 import { log, enableLogger } from '../core/logger';
-import { Ignition } from '../ignition';
+import { IgnitionFactory } from '../ignition';
 
 enableLogger();
 const logger = log('App');
@@ -44,7 +44,7 @@ export default class CustomApp extends App<IAppProps> {
     }
 
     try {
-      pageProps = await new Ignition(appContext).turnOn();
+      pageProps = await IgnitionFactory(appContext).derive();
     } catch (e) {
       log('Ignition').error(
         'Ошибка во время исполнения Ignition checks', e,
@@ -64,8 +64,11 @@ export default class CustomApp extends App<IAppProps> {
 
   public constructor(props: any) {
     super(props);
-    if (!process.env.IS_SERVER && !props.preventRender) {
-      new Ignition().bind(props.pageProps);
+    const { router, Component, pageProps, preventRender } = props;
+    if (!process.env.IS_SERVER && !preventRender) {
+      // ctx: router - от контекста нам нужны pathname, asPath, query - которые есть в роутере.
+      const contextLike = { ctx: router, Component, router };
+      IgnitionFactory(contextLike).bind(pageProps);
     }
   }
 
