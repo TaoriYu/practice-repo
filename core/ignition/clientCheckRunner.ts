@@ -1,4 +1,4 @@
-import { any, empty, equals, ifElse, flip, is, test, propOr } from 'ramda';
+import { any, equals, ifElse, flip, is, test, propOr, isEmpty } from 'ramda';
 import { ComponentClass } from 'react';
 import { container } from '../provider/container';
 import { TCheck, TPagesValidator, TPathsValidator } from './interfaces';
@@ -31,20 +31,24 @@ export class ClientCheckRunner {
     const isInPath = any(ifElse(is(String), equals(this.pathname), flip(test)(this.pathname)));
     const excludePaths: TPathsValidator = propOr([], 'excludePaths', check);
     const includePaths: TPathsValidator = propOr([], 'includePaths', check);
-    const isIncluded = !empty(includePaths) && isInPath(includePaths);
-    const isExcluded = isInPath(excludePaths);
 
-    return isIncluded || !isExcluded;
+    if (isEmpty(includePaths)) {
+      return !isInPath(excludePaths);
+    } else {
+      return isInPath(includePaths);
+    }
   }
 
   private isPagesApproach(check: TCheck) {
     const isInFn = any(equals<Function>(this.component));
     const excludePages: TPagesValidator = propOr([], 'excludePages', check);
     const includePages: TPagesValidator = propOr([], 'includePages', check);
-    const isIncluded = isInFn(excludePages);
-    const isExcluded = !empty(includePages) && isInFn(includePages);
 
-    return isIncluded || !isExcluded;
+    if (isEmpty(includePages)) {
+      return !isInFn(excludePages);
+    } else {
+      return isInFn(includePages);
+    }
   }
 
   private get pathname() {
