@@ -24,7 +24,7 @@ export class ClientCheckRunner {
   }
 
   private isValid(check: TCheck) {
-    return this.isPathApproach(check) || this.isPagesApproach(check);
+    return this.isPathApproach(check) && this.isPagesApproach(check);
   }
 
   private isPathApproach(check: TCheck) {
