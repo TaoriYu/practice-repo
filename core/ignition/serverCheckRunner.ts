@@ -16,7 +16,7 @@ export class ServerCheckRunner {
     if (this.isValid(check)) {
       const checkInstance = container.get(check);
 
-      return checkInstance.serverSide(this.context);
+      return checkInstance.serverSide(this.context.ctx);
     }
   }
 
