@@ -1,7 +1,7 @@
 /* tslint:disable:file-name-casing */
-import * as React from 'react';
 import 'reflect-metadata';
-import '../components/uiKit/Less/notImportedGlobals.less';
+import 'core-js/features/symbol';
+import * as React from 'react';
 import DevTools from 'mobx-react-devtools';
 import App, { Container, NextAppContext } from 'next/app';
 import { log, enableLogger } from '../core/logger';
