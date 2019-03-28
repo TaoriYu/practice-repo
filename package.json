@@ -3,7 +3,6 @@
   "scripts": {
     "dev": "env NODE_ENV=development next",
     "build": "next build",
-    "build:static": "gulp --gulpfile ./semantic/gulpfile.js build",
     "start": "next start",
     "analyze": "env NODE_ENV=production NODE_ANALYZE=1 next build",
     "lint": "(npm run lint:code & npm run lint:styles & wait)",
@@ -50,7 +49,6 @@
     "react": "^16.8.5",
     "react-dom": "^16.8.5",
     "reflect-metadata": "^0.1.13",
-    "semantic-ui-react": "^0.85.0",
     "ts-loader": "^5.3.3"
   },
   "devDependencies": {
@@ -85,7 +83,6 @@
     "lint-staged": "^8.1.3",
     "opn": "^5.4.0",
     "optimize-css-assets-webpack-plugin": "^5.0.1",
-    "semantic-ui": "^2.4.2",
     "stylelint": "^9.10.1",
     "stylelint-config-recommended": "^2.1.0",
     "stylelint-config-standard": "^18.2.0",
