@@ -5,7 +5,7 @@ import { ConfigurationService } from './configurationService';
 
 @provideSingleton(RuntimeSettings)
 export class RuntimeSettings {
-  public isRuntimeEnabled = false;
+  public isRuntimeEnabled = global.isRuntimeEnabled;
   public service: ConfigurationService<{}> = new ConfigurationService();
   private log = log('RuntimeSettings');
   private mutex = false;
@@ -26,6 +26,7 @@ export class RuntimeSettings {
     if (this.isRuntimeEnabled) {
       throw new Error('you trying to enable runtime settings that already enabled');
     }
+    global.isRuntimeEnabled = true;
     this.isRuntimeEnabled = true;
   }
 
