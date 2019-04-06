@@ -11,9 +11,9 @@ function makeCssConfig() {
     cssModules: 'global', // enabling modules in global scope
     cssLoaderOptions: {
       importLoaders: 1,
-      localIdentName: "[name]_[local]__[hash:base64:5]",
+      localIdentName: '[name]_[local]__[hash:base64:5]',
     },
-  }
+  };
 }
 
 function customs() {
@@ -26,7 +26,7 @@ function customs() {
       // Fixes npm packages that depend on `fs` module
       config.node = {
         fs: 'empty',
-        path: 'empty'
+        path: 'empty',
       };
       if (options.isServer) {
         if (process.env.NODE_ENV !== 'production') {
@@ -41,7 +41,7 @@ function customs() {
         ].map(args => new webpack.NormalModuleReplacementPlugin(...args)));
       }
       config.plugins.push(
-        new webpack.DefinePlugin({ 'process.env.IS_SERVER': options.isServer })
+        new webpack.DefinePlugin({ 'process.env.IS_SERVER': options.isServer }),
       );
       if (!options.isServer) {
         if (process.env.NODE_ANALYZE) {
@@ -56,10 +56,10 @@ function customs() {
           cssProcessorPluginOptions: {
             preset: ['default', { discardComments: { removeAll: true } }],
           },
-          canPrint: true
-        }))
+          canPrint: true,
+        }));
       }
-      return config
+      return config;
     },
 
   };
