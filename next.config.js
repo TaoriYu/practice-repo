@@ -1,66 +1,27 @@
-module.exports = () => {
-  const withTypescript = require('./core/build/withTypescript');
-  // less also could compile css;
-  const withLESS = require('./core/build/withLess');
+const withTypescript = require('./core/build/withTypescript');
+const withLESS = require('./core/build/withLess');
+const withTemplate = require('./core/build/withTemplate');
+const { compose } = require('ramda');
 
-  return withTypescript(withLESS(Object.assign({}, makeCssConfig(), customs())));
+module.exports = () => {
+  const conf =  compose(
+    withTypescript,
+    withLESS,
+    makeCssConfig,
+    withTemplate,
+    /** add your custom settings HERE */
+  )();
+
+  return conf;
 };
 
-function makeCssConfig() {
+function makeCssConfig(nextConfig) {
   return {
     cssModules: 'global', // enabling modules in global scope
     cssLoaderOptions: {
       importLoaders: 1,
       localIdentName: '[name]_[local]__[hash:base64:5]',
     },
-  };
-}
-
-function customs() {
-  const webpack = require('webpack');
-  const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-  const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-
-  return {
-    webpack: (config, options) => {
-      // Fixes npm packages that depend on `fs` module
-      config.node = {
-        fs: 'empty',
-        path: 'empty',
-      };
-      if (options.isServer) {
-        if (process.env.NODE_ENV !== 'production') {
-          config.plugins.push(new ForkTsCheckerWebpackPlugin());
-        }
-        config.plugins = config.plugins.concat([
-          [/next\/asset/, 'next-server/asset'],
-          [/next\/dynamic/, 'next-server/dynamic'],
-          [/next\/constants/, 'next-server/constants'],
-          [/next\/config/, 'next-server/config'],
-          [/next\/head/, 'next-server/head'],
-        ].map(args => new webpack.NormalModuleReplacementPlugin(...args)));
-      }
-      config.plugins.push(
-        new webpack.DefinePlugin({ 'process.env.IS_SERVER': options.isServer }),
-      );
-      if (!options.isServer) {
-        if (process.env.NODE_ANALYZE) {
-          config.plugins.push(new BundleAnalyzerPlugin());
-        }
-      }
-      if (process.env.NODE_ENV === 'production') {
-        const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-        config.plugins.push(new OptimizeCssAssetsPlugin({
-          assetNameRegExp: /\.css$/g,
-          cssProcessor: require('clean-css'),
-          cssProcessorPluginOptions: {
-            preset: ['default', { discardComments: { removeAll: true } }],
-          },
-          canPrint: true,
-        }));
-      }
-      return config;
-    },
-
+    ...nextConfig,
   };
 }
