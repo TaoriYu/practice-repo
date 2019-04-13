@@ -1,0 +1,18 @@
+// Сюда добавляем глобальные less переменные. Такие как цвета и размеры.
+// Групировать переменные по блокам.
+// НЕ ИМПОРТИРУЙТЕ ЭТОТ ФАИЛ В ДРУГИЕ LESS, ИМПОРТИРУЙТЕ global.less
+
+/** COLORS */
+
+@main-blue: blue;
+
+/** COLORS END */
+
+/** MEDIA QUERIES */
+// Предпочитаем mobile-first базовый стиль считается mobile
+
+@desktop:     ~'all and (min-width: 1024px)';
+@tablet:      ~'all and (min-width: 426px)';
+@tablet-only: ~'@{tablet} and (max-width: 1023px)';
+
+/** MEDIA QUERIES END */
