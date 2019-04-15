@@ -2,5 +2,6 @@
 declare module NodeJS  {
   interface Global {
     isRuntimeEnabled: boolean;
+    __container: any; // <-- do not USE!;
   }
 }

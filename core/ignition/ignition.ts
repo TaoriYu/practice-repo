@@ -1,9 +1,14 @@
 import invariant from 'invariant';
+import { Container } from 'inversify';
 import { NextAppContext } from 'next/app';
 import { log } from '../logger';
 import { TCheck } from './interfaces';
 import { ClientCheckRunner } from './clientCheckRunner';
 import { ServerCheckRunner } from './serverCheckRunner';
+
+export interface IExtNextAppContext extends NextAppContext {
+  container: Container;
+}
 
 /**
  * Отвечает за первоначальную загрузку приложения. Позволяет передавать данные с клиента
@@ -18,13 +23,13 @@ import { ServerCheckRunner } from './serverCheckRunner';
  * @see RuntimeSettingsCheck - as example
  */
 export class Ignition {
-  private readonly context?: NextAppContext;
+  private readonly context?: IExtNextAppContext;
   private readonly checks: TCheck[] = [];
   private readonly log = log('Ignition');
   private readonly serverCheckRunner: ServerCheckRunner;
   private readonly clientCheckRunner: ClientCheckRunner;
 
-  public constructor(appContext: NextAppContext, checks: TCheck[]) {
+  public constructor(appContext: IExtNextAppContext, checks: TCheck[]) {
     this.context = appContext;
     this.checks = checks;
     this.serverCheckRunner = new ServerCheckRunner(appContext);
@@ -66,7 +71,7 @@ export class Ignition {
     invariant(!!this.context, 'couldn\'t provide server side check without context');
 
     const derivedData: object = {};
-    const { res } = this.context!.ctx;
+    const { res, pathname } = this.context!.ctx;
     for (const check of this.checks) {
       try {
         Object.assign(derivedData, await this.serverCheckRunner.run(check));
@@ -85,7 +90,7 @@ export class Ignition {
         }
       }
 
-      if (res && (res.finished || res.statusCode !== 200)) {
+      if (res && (res.finished || res.statusCode !== 200) && pathname !== '/_error') {
         this.log.error(
           'Response intercepting before all checks is go on, unsuccessful check name: %s',
           check.name,

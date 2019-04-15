@@ -2,15 +2,16 @@ import { random } from '../../../utils/fn';
 import { log } from '../../logger';
 import { provideSingleton } from '../../provider';
 import { ConfigurationService } from './configurationService';
+const isDev = process.env.NODE_ENV === 'development';
 
 @provideSingleton(RuntimeSettings)
 export class RuntimeSettings {
-  public isRuntimeEnabled = global.isRuntimeEnabled;
+  public isRuntimeEnabled = isDev ? false : global.isRuntimeEnabled;
   public service: ConfigurationService<{}> = new ConfigurationService();
-  private log = log('RuntimeSettings');
   private mutex = false;
   /* for preventing instance duplicating */
   private uniqueServiceId = random(1000, 10000);
+  private log = log(`RuntimeSettings_${this.uniqueServiceId}`);
 
   public async enableRuntime() {
     if (!process.env.IS_SERVER) { return undefined; }
@@ -19,7 +20,7 @@ export class RuntimeSettings {
     await this.service.update();
     this.log.debug('first initial update finished');
 
-    return this.runtimeSettings();
+    return isDev ? () => ({}) : this.runtimeSettings();
   }
 
   private check() {
@@ -51,7 +52,7 @@ export class RuntimeSettings {
     this.log.debug('start update on all adapters');
     try {
       await this.service.update();
-      this.log.debug('all updates finished');
+      this.log.debug('all adapters successfully finished');
     } catch (e) {
       this.log.error(
         'Runtime settings throw error while executing updates\n' +

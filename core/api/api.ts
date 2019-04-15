@@ -73,9 +73,9 @@ export class Api<DtoClass, ErrorDtoClass = {}> extends BaseAPi {
     const axiosConfig: AxiosRequestConfig = {
       cancelToken: this.requestToken!.token,
       url: this.refreshUrl(),
-      ...config,
       params: this.getOApiParams(),
       data: this.getOApiData(),
+      ...config,
       ...customConfigFields,
     };
 
