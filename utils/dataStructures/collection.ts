@@ -1,4 +1,7 @@
+import { log } from '../../core/logger';
+
 /**
+ * @deprecated
  * Представляет массив виде коллекции, где ключ коллекции это id объекта в массиве.
  * Так-же возможно получить изначальный порядок элементов в массиве используя
  * свойство order;
@@ -13,6 +16,8 @@ export class Collection<T extends object, E extends keyof T> {
   public readonly order: Array<T[E]> = [];
 
   public constructor(array: T[], objectIdentifier: E) {
+    log('system').warn('You are using a deprecated Collection class.' +
+      ' This data structure will be removed soon.');
     array.forEach((item) => {
       this.order.push(item[objectIdentifier]);
       this[item[objectIdentifier] as unknown as number] = item;
