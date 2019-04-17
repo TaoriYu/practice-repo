@@ -1,7 +1,12 @@
+/**
+ * @jest-environment jsdom
+ */
 import * as React from 'react';
-import { shallow } from 'enzyme';
+import { mount } from 'enzyme';
+import { createStoreContainer } from '../createStoreContainer';
 import { injectStore } from '../InjectStore';
 import { makeStore } from '../makeStore';
+import { Provider } from '../StoreContext';
 
 describe('inject store test suite', () => {
   test('should inject store into component', () => {
@@ -15,11 +20,12 @@ describe('inject store test suite', () => {
     class Store { public text() { return mockFn(); } }
 
     const Injected = injectStore({ store: Store })(Component);
-    const rendered = shallow(<Injected />);
-    // <Wrap><Component/></Wrap> need to go deeper;
-    rendered.shallow();
+    mount((
+      <Provider value={createStoreContainer()}>
+        <Injected />
+      </Provider>
+    ));
 
     expect(mockFn).toBeCalled();
-    expect(rendered.props().store).toBeDefined();
   });
 });

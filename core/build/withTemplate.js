@@ -33,6 +33,7 @@ function serverSide(config, options) {
   const originalEntry = config.entry;
   config.entry = async () => {
     const entries = await originalEntry();
+
     const appEntry = Object
       .keys(entries)
       .find((entry) => entry && /_app\.js/.test(entry));
@@ -71,7 +72,9 @@ function clientSide(config, options) {
     return entries;
   };
 
-  if (STATES.analyze) { addPlugin(new BundleAnalyzerPlugin()); }
+  if (STATES.analyze) {
+    addPlugin(new BundleAnalyzerPlugin());
+  }
 }
 
 function bothSides(config, options) {
