@@ -29,21 +29,5 @@ module.exports = {
       ],
     ],
     'scope-case': [2, 'always', 'lower-case'],
-    'scope-enum': [
-      2,
-      'always',
-      [
-        'components',
-        'pages',
-        'tests',
-        'product',
-        'configs',
-        'core',
-        'stores',
-        'hygen',
-        'code-utils',
-        '',
-      ],
-    ],
   },
 };
