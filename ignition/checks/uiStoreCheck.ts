@@ -1,28 +1,29 @@
 import { NextContext } from 'next';
-import { ICheck } from '../../core/ignition';
 import { pathOr } from 'ramda';
+import { ICheck } from '../../core/ignition';
 import { provide } from '../../core/provider';
 import { UiStore } from '../../stores/ui';
-
-interface IDerivedData {
-  userAgent: string;
-}
+import { detectBrowser } from '../../utils/userAgent';
 
 @provide(UiStoreCheck)
 export class UiStoreCheck implements ICheck {
   public constructor(private uiStore: UiStore) {}
 
-  public clientSide(derivedData: IDerivedData): void {
-    this.uiStore.setIsIE(Boolean(derivedData.userAgent.match('Trident')));
+  public clientSide(): void {
+    const userAgent = window.navigator.userAgent;
+
+    if (userAgent) {
+      this.uiStore.setBrowser(detectBrowser(userAgent));
+    }
   }
 
-  public async serverSide({ req }: NextContext): Promise<IDerivedData> {
+  public async serverSide({ req }: NextContext): Promise<{}> {
     const userAgent = pathOr('', ['headers', 'user-agent'], req) as string;
 
     if (userAgent) {
-      this.uiStore.setIsIE(Boolean(userAgent.match(/trident|msie/ig)));
+      this.uiStore.setBrowser(detectBrowser(userAgent));
     }
 
-    return { userAgent };
+    return {};
   }
 }
