@@ -1,9 +1,5 @@
 /* tslint:disable:file-name-casing */
-/* Polyfills and first load area */
-import 'core-js/features/symbol';
 import '../di/container';
-import 'reflect-metadata';
-/* END */
 
 import * as React from 'react';
 import DevTools from 'mobx-react-devtools';

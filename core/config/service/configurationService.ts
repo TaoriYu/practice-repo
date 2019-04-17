@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { injectable, postConstruct } from 'inversify';
 import { ICompiledConfiguration, TCompiledConfigFields, TReturnConfigGroup } from '../types/internals';
 import { IConfigurationAdapter } from './adapters';

@@ -30,6 +30,19 @@ module.exports = function withTemplate(nextConfig = {}) {
 
 function serverSide(config, options) {
   const addPlugin = (plugin) => config.plugins = config.plugins.concat(plugin);
+  const originalEntry = config.entry;
+  config.entry = async () => {
+    const entries = await originalEntry();
+    const appEntry = Object
+      .keys(entries)
+      .find((entry) => entry && /_app\.js/.test(entry));
+
+    if (entries[appEntry] && !entries[appEntry].includes('./polyfills.js')) {
+      entries[appEntry].unshift('./polyfills.js');
+    }
+
+    return entries;
+  };
 
   if (STATES.production) {
     addPlugin(new ForkTsCheckerWebpackPlugin());
@@ -45,6 +58,18 @@ function serverSide(config, options) {
 
 function clientSide(config, options) {
   const addPlugin = (plugin) => config.plugins = config.plugins.concat(plugin);
+  const originalEntry = config.entry;
+  config.entry = async () => {
+    const entries = await originalEntry();
+    if (
+      entries['main.js'] &&
+      !entries['main.js'].includes('./polyfills.js')
+    ) {
+      entries['main.js'].unshift('./polyfills.js');
+    }
+
+    return entries;
+  };
 
   if (STATES.analyze) { addPlugin(new BundleAnalyzerPlugin()); }
 }

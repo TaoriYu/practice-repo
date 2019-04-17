@@ -22,7 +22,7 @@ const testConfig: IConfig<{}> = {
 };
 
 container.bind(ConfigurationService).toSelf().inSingletonScope();
-const getService = () => container.get<ConfigurationService<{}>>(ConfigurationService);
+const getService = () => container.get(ConfigurationService);
 
 describe('configuration service test suite', () => {
   test('should load default configuration in browser', () => {
