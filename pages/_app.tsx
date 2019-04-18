@@ -1,11 +1,17 @@
 /* tslint:disable:file-name-casing */
 import 'reflect-metadata';
 import 'core-js/features/symbol';
+import 'core-js/features/array';
 import * as React from 'react';
 import DevTools from 'mobx-react-devtools';
 import App, { Container, NextAppContext } from 'next/app';
 import { log, enableLogger } from '../core/logger';
 import { IgnitionFactory } from '../ignition';
+
+if (!process.env.IS_SERVER) {
+  // tslint:disable-next-line:no-require-imports
+  require('intersection-observer');
+}
 
 enableLogger();
 const logger = log('App');
