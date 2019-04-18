@@ -1,18 +1,18 @@
 {
   "name": "template-app",
   "scripts": {
-    "dev": "env NODE_ENV=development next",
+    "dev": "env NODE_ENV=development node ./server.js",
     "build": "env NODE_ENV=production next build",
-    "start": "env NODE_ENV=production next start",
+    "start": "env NODE_ENV=production node ./server.js",
     "analyze": "env NODE_ENV=production NODE_ANALYZE=1 next build",
     "lint": "(npm run lint:code & npm run lint:styles & wait)",
     "lint:code": "tslint --project ./tsconfig.json",
     "lint:styles": "stylelint './**/*.@(less|css)'",
     "lint:staged": "lint-staged",
     "typecheck": "tsc --noEmit",
-    "test": "jest",
+    "test": "env JEST_REPORT_FILE='./coverage/test-report.json' jest",
     "test:w": "jest --watch",
-    "test:c": "node ./core/tests/runners/coverage.js",
+    "test:c": "env JEST_REPORT_FILE='./coverage/test-report.json' node ./core/tests/runners/coverage.js",
     "swagger": "./core/build/genSwagger.sh"
   },
   "husky": {
@@ -39,6 +39,7 @@
     "core-js": "3.0.1",
     "debug": "4.1.1",
     "intersection-observer": "^0.5.1",
+    "jest-bamboo-reporter": "^1.2.1",
     "invariant": "2.2.4",
     "inversify": "5.0.1",
     "mobx": "4.9.4",
