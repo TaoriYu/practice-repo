@@ -38,6 +38,7 @@
     "classnames": "2.2.6",
     "core-js": "3.0.1",
     "debug": "4.1.1",
+    "intersection-observer": "^0.5.1",
     "invariant": "2.2.4",
     "inversify": "5.0.1",
     "mobx": "4.9.4",

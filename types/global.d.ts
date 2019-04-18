@@ -5,3 +5,7 @@ declare module NodeJS  {
     __container: any; // <-- do not USE!;
   }
 }
+
+interface Window {
+  MSInputMethodContext: any;
+}
