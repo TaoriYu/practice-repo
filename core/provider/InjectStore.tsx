@@ -1,28 +1,29 @@
+import { Container } from 'inversify';
 import * as React from 'react';
-import { container } from './container';
+import { StoreConsumer } from './StoreContext';
 
 export function injectStore<E>(injected: E) {
   return <P extends React.ComponentType<Matching<TInjectCfg<E>, GetProps<P>>>>(Component: P) => {
-    const injProps: () => TInjectCfg<E> = () => Object.keys(injected).reduce(
-      // @ts-ignore
-      (acc, val: string) => ({ ...acc, [val]: container.get(injected[val]) }),
-      {} as TInjectCfg<E>,
-    );
+    const injProps: (container: Container) => TInjectCfg<E> =
+      (container) => Object.keys(injected).reduce(
+        // @ts-ignore
+        (acc, val: string) => ({ ...acc, [val]: container.get(injected[val]) }),
+        {} as TInjectCfg<E>,
+      );
 
     return class InjectWrap extends React.Component<Omit<GetProps<P>, E>> {
-      private injProps: TInjectCfg<E>;
-
-      public constructor(props: Omit<GetProps<P>, E>) {
-        super(props);
-        this.injProps = injProps();
-      }
-
       public render() {
-        return React.createElement(
-          // tslint:disable-next-line:no-any
-          Component as any,
-          { ...this.props, ...this.injProps },
-          this.props.children,
+        return (
+          <StoreConsumer>
+            {(container) => {
+              return React.createElement(
+                // tslint:disable-next-line:no-any
+                Component as any,
+                { ...this.props, ...injProps(container) },
+                this.props.children,
+              );
+            }}
+          </StoreConsumer>
         );
       }
     };

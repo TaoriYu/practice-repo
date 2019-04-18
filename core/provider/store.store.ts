@@ -3,7 +3,7 @@ import { provideSingleton } from './provideSingleton';
 import Newable = interfaces.Newable;
 import Abstract = interfaces.Abstract;
 
-type TStoreName = string | Newable<{}> | Abstract<{}> | symbol;
+export type TStoreName = string | Newable<{}> | Abstract<{}> | symbol;
 
 interface IStoreHandler {
   name: TStoreName;

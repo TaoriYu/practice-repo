@@ -14,7 +14,6 @@ type TStoreName = string | Newable<{}> | Abstract<{}> | symbol;
  */
 export function makeStore(name: TStoreName) {
   return <T extends IConstructable>(constructor: T) => {
-    container.bind(name).to(constructor).inSingletonScope();
     container.get(StoreStore).push(name, constructor);
 
     return injectable()(constructor);

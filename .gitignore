@@ -19,7 +19,3 @@ yarn-debug.log*
 yarn-error.log*
 
 /.idea
-/semantic/dist
-/static/semantic.css
-/static/semantic.min.css
-/static/themes

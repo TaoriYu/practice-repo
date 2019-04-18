@@ -1,10 +1,11 @@
 import { AxiosError } from 'axios';
 import { EApiErrorTypes } from './inrefaces';
+import { pathOr } from 'ramda';
 
 export function errorLogMsg(id: number, errorType: EApiErrorTypes, error: AxiosError) {
   const url = errorType === EApiErrorTypes.response
     ? error.response!.config.url
-    : error.request._options.path;
+    : pathOr('unrecognised', ['request', '_options', 'path'], error);
 
   return `\n=========== error ${id} ==========\n`
     + `  ${errorType} error\n`

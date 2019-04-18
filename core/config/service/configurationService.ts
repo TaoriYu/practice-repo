@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { injectable, postConstruct } from 'inversify';
 import { ICompiledConfiguration, TCompiledConfigFields, TReturnConfigGroup } from '../types/internals';
 import { IConfigurationAdapter } from './adapters';
@@ -61,7 +60,7 @@ export class ConfigurationService<D extends TReturnConfigGroup<D>> implements IC
     for (const { adapter } of this.adapters) {
       const result = await adapter.get();
       if (result) {
-        configurationToFill = mergeDeepLeft(result, configurationToFill);
+        configurationToFill = mergeDeepLeft(result, configurationToFill) as any;
       }
     }
 
