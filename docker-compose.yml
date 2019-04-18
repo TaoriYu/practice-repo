@@ -5,13 +5,14 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile-dev
-    image: template
+    image: # тут нужно указать название проекта\репозитория (можно посмотреть в package.json)
     volumes:
       - "./:/app"
     ports:
       - "3000:3000"
     networks:
       - webnet
+    dns: 172.28.40.14 # Это актуально пока у нас проблемы с dns
     environment:
       - TERM=xterm-256color`
   nginx:
@@ -22,7 +23,8 @@ services:
       - "8080:8080"
     networks:
       - webnet
+    dns: 172.28.40.14 # Это актуально пока у нас проблемы с dns
     depends_on:
-      - template
+      - app
 networks:
   webnet:
