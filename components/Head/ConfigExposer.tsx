@@ -1,21 +1,12 @@
 import * as React from 'react';
 import { AppConfigurationService } from '../../config';
-import { injectStore } from '../../core/provider';
+import { useStore } from '../../core/provider/StoreContext';
 
-export interface IConfigExposerProps {
-  configurationService: AppConfigurationService;
+export function ConfigExposer() {
+  const conf = useStore<AppConfigurationService>(AppConfigurationService).publicRuntimeConfig;
+  const cfgScript = `window.__CONFIGURATION__ = JSON.parse('${JSON.stringify(conf)}')`;
+
+  return (
+    <script dangerouslySetInnerHTML={{ __html: cfgScript }} />
+  );
 }
-
-class ConfigExposerComponent extends React.PureComponent<IConfigExposerProps> {
-  public render() {
-    const conf = this.props.configurationService.publicRuntimeConfig;
-    const cfgScript = `window.__CONFIGURATION__ = JSON.parse('${JSON.stringify(conf)}')`;
-
-    return (
-      <script dangerouslySetInnerHTML={{ __html: cfgScript }} />
-    );
-  }
-}
-
-export const ConfigExposer =
-  injectStore({ configurationService: AppConfigurationService })(ConfigExposerComponent);

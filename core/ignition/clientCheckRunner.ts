@@ -1,11 +1,12 @@
+import { Container } from 'inversify';
 import { any, equals, ifElse, flip, is, test, propOr, isEmpty } from 'ramda';
 import { ComponentClass } from 'react';
-import { container } from '../provider/container';
 import { TCheck, TPagesValidator, TPathsValidator } from './interfaces';
 
 interface IClientContext {
   ctx: { pathname: string };
   Component: (Function | IConstructable | ComponentClass<any>);
+  container: Container;
 }
 
 /**
@@ -19,7 +20,7 @@ export class ClientCheckRunner {
 
   public run = <T>(check: TCheck, derivedData: T) => {
     if (this.isValid(check)) {
-      container.get(check).clientSide(derivedData);
+      this.context.container.get(check).clientSide(derivedData);
     }
   }
 

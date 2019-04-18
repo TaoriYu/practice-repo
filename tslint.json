@@ -5,7 +5,13 @@
     "tslint-react",
     "tslint-eslint-rules"
   ],
-  "jsRules": {},
+  "jsRules": {
+    "curly": true,
+    "quotemark": {
+      "options": "single"
+    },
+    "object-literal-sort-keys": false
+  },
   "rules": {
     "align": [
       true,

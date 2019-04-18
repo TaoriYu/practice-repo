@@ -5,7 +5,7 @@ import { random } from '../../utils/fn';
 import { BaseAPi } from './baseApi';
 import { EApiState, TRunConfiguration } from './inrefaces';
 import { IOApiConfig } from './oApiFactory';
-import { call, map, propOr, identity, prop } from 'ramda';
+import { call, map, propOr, identity, prop, filter, complement, isNil } from 'ramda';
 import invariant from 'invariant';
 
 /**
@@ -73,9 +73,9 @@ export class Api<DtoClass, ErrorDtoClass = {}> extends BaseAPi {
     const axiosConfig: AxiosRequestConfig = {
       cancelToken: this.requestToken!.token,
       url: this.refreshUrl(),
-      ...config,
       params: this.getOApiParams(),
       data: this.getOApiData(),
+      ...config,
       ...customConfigFields,
     };
 
@@ -134,6 +134,9 @@ export class Api<DtoClass, ErrorDtoClass = {}> extends BaseAPi {
   }
 
   private getOApiData() {
-    return map(call, propOr({}, 'data', this.OApiConfig!));
+    return filter(
+      complement(isNil),
+      map(call, propOr({}, 'data', this.OApiConfig!)),
+    );
   }
 }

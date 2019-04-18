@@ -8,6 +8,7 @@ describe('runtime settings test suite', () => {
   beforeEach(() => {
     jest.clearAllTimers();
     jest.useFakeTimers();
+    global.isRuntimeEnabled = false;
     Object.assign(process.env, { IS_SERVER: 1 });
   });
 
@@ -58,7 +59,7 @@ describe('runtime settings test suite', () => {
     const cfgSrv = new ConfigurationService();
     runtime.service = cfgSrv;
     await runtime.enableRuntime();
-    mocked(cfgSrv.update).mockImplementation(() => () =>
+    mocked(cfgSrv.update).mockImplementation(() =>
       new Promise((resolve) => setTimeout(resolve, 20000)),
     );
     expect(cfgSrv.update).toHaveBeenCalledTimes(1);

@@ -6,7 +6,7 @@ module.exports = {
     'subject-case': [
       2,
       'never',
-      ['sentence-case', 'start-case', 'pascal-case', 'upper-case']
+      ['sentence-case', 'start-case', 'pascal-case', 'upper-case'],
     ],
     'subject-empty': [2, 'never'],
     'subject-full-stop': [2, 'never', '.'],
@@ -25,25 +25,9 @@ module.exports = {
         'refactor',
         'revert',
         'style',
-        'test'
-      ]
+        'test',
+      ],
     ],
     'scope-case': [2, 'always', 'lower-case'],
-    'scope-enum': [
-      2,
-      'always',
-      [
-        'components',
-        'pages',
-        'tests',
-        'product',
-        'configs',
-        'core',
-        'stores',
-        'hygen',
-        'code-utils',
-        ''
-      ]
-    ]
-  }
+  },
 };

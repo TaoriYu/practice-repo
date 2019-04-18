@@ -5,8 +5,8 @@ module.exports = (nextConfig = {}) => {
     webpack(config, options) {
       if (!options.defaultLoaders) {
         throw new Error(
-          'This plugin is not compatible with Next.js versions below 5.0.0 https://err.sh/next-plugins/upgrade'
-        )
+          'This plugin is not compatible with Next.js versions below 5.0.0 https://err.sh/next-plugins/upgrade',
+        );
       }
 
       const { dev, isServer } = options;
@@ -14,7 +14,7 @@ module.exports = (nextConfig = {}) => {
         cssModules,
         cssLoaderOptions,
         postcssLoaderOptions,
-        lessLoaderOptions = {}
+        lessLoaderOptions = {},
       } = nextConfig;
 
       options.defaultLoaders.less = cssLoaderConfig(config, {
@@ -27,10 +27,10 @@ module.exports = (nextConfig = {}) => {
         loaders: [
           {
             loader: 'less-loader',
-            options: lessLoaderOptions
-          }
-        ]
-      })
+            options: lessLoaderOptions,
+          },
+        ],
+      });
 
       if (process.env.NODE_ENV !== 'production') {
         options.defaultLoaders.less = options.defaultLoaders.less.filter((l) => {
@@ -40,14 +40,14 @@ module.exports = (nextConfig = {}) => {
 
       config.module.rules.push({
         test: /\.(less|css)$/,
-        use: options.defaultLoaders.less
-      })
+        use: options.defaultLoaders.less,
+      });
 
       if (typeof nextConfig.webpack === 'function') {
-        return nextConfig.webpack(config, options)
+        return nextConfig.webpack(config, options);
       }
 
-      return config
-    }
-  })
-}
+      return config;
+    },
+  });
+};

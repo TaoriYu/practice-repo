@@ -1,6 +1,5 @@
-import { NextAppContext } from 'next/app';
 import { any, isEmpty, equals, ifElse, flip, is, test, propOr } from 'ramda';
-import { container } from '../provider/container';
+import { IExtNextAppContext } from './ignition';
 import { TCheck, TPagesValidator, TPathsValidator } from './interfaces';
 
 /**
@@ -9,12 +8,12 @@ import { TCheck, TPagesValidator, TPathsValidator } from './interfaces';
 export class ServerCheckRunner {
 
   public constructor(
-    private readonly context: NextAppContext,
+    private readonly context: IExtNextAppContext,
   ) {}
 
   public run = async (check: TCheck) => {
     if (this.isValid(check)) {
-      const checkInstance = container.get(check);
+      const checkInstance = this.context.container.get(check);
 
       return checkInstance.serverSide(this.context.ctx);
     }
