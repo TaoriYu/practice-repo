@@ -9,6 +9,7 @@
 ## Содержание
 - [Создание нового микросервиса](#make-new-microservice)
 - [Запуск](#start)
+- [Запуск используя docker](#start-docker)
 - [Необходимые глобальные зависимости](#global-deps)
 - [Что из технологий используется](#usages)
 - [Npm scripts](#npm-scripts)
@@ -34,24 +35,46 @@
 <a name="make-new-microservice"></a>
 ## Создание нового микросервиса
 Для того что-бы развернуть новый микросервис нужно:
-1. Склонировать репозиторий [шаблона](https://bitbucket.corp.tass.ru/projects/TASS/repos/react-microservice-template)
-и удалить из него все ветки кроме **master**
-2. Создать новый репозиторий в названии репозитория указать назавние проекта по шаблону '_*-frontend_' пример: 
-*tass-com-frontend*
-3. перейти в клон из п1 и выполнить git remote remove origin
-4. git remote add origin (урл который получили в п2)
-5. Если используете git-flow необходимо создать ветку develop и выбрать ее в настройках как default branch
-7. Поменять поле name в package.json c _template-app_ на название репозитория
-8. закомитить изменения
+1. Создать новый репозиторий в bitbucket
+    1. Создать репозиторий нужно публичный и в проекте например (TASS.RU)
+    2. в названии репозитория указать назавние проекта по шаблону '_*-frontend_' пример: *tass-com-frontend*
+    3. Репозиторию нужно дать permissions в разделе repository permissions нужно
+добавить групы 'bitbucket-tm-developers' и 'jira-tm-developers-team' с доступами на write
+    4. В разделе webhooks нажать create webhook, в качестве name указать teletassik, в качестве url
+'https://teletass-tg.now.sh/dist/bitbucket.js', отметить все галки в разделе pull request
+2. Локально склонить репозиторий шаблона
+3. перейти в репозиторий и выполнить ```git remote remove origin```
+4. ```git remote add origin {URL}``` (урл который получили в п1, URL вашего нового репозитория)
+5. Поменять поле name в package.json c _template-app_ на название репозитория
+6. Указать название репозитория в файле docker-compose.yml поле image из раздела app (там коментарий)
+7. ```git commit -m "build(core): создание нового проекта"```
+8. ```git push origin master```
+9. Перейте в раздел branches нового репозитория, нажать многоточие, надать create branch from here,
+название ветки - **develop** branch type - custom
+10. перейте в раздел repository settings -> branching model
+    1. выбрать use custom settings
+    2. Development -> use branch name -> develop
+    3. Production -> no production branch
+    4. Branch prefixes
+       1. Bugfix - галка стоит название ветки 'bugfix-'
+       2. Feature - галка убрана
+       3. Hotfix - галка стоит, название ветки 'hotfix-'
+       4. Release - галка стоит, название ветки 'release-'
+    5. Automatic merging - галка стоит.
 
 <a name="start"></a>
 ## Запуск
 Для запуска микросервиса вам потребуется:
 1. установить lts версию node 10+
 2. установить пакеты командой `npm install`
-2.1. при первом запуске нужно сбилдить статику командой `npm run build:static`
 3. для запуска в режиме разработки `npm run dev`
 4. приложение будет доступно на порту **3000**
+
+<a name="start-docker"></a>
+## Запуск используя docker
+1. установить пакеты командой npm install
+2. docker-compose up
+3. приложение будет доступно на порту **3000**
 
 <a name="global-deps"></a>
 ## Необходимые глобальные зависимости для разработки
@@ -77,7 +100,7 @@
 - [Commitizen](https://github.com/commitizen/cz-cli) - Генератор комитов.
 - [Commitlint](https://github.com/marionebl/commitlint) - Линтер для комитов.
 - [Mobx](https://mobx.js.org) - Для управления состоянием приложения.
-- [Mobx-React](https://github.com/mobxjs/mobx-react) - Mobx в React
+- [Mobx-React-Lite](https://github.com/mobxjs/mobx-react-lite) - Mobx в React
 - [React](https://reactjs.org) - Очень умный шаблонизатор.
 
 <a name="npm-scripts"></a>
@@ -122,14 +145,17 @@
 ### `npm run test:c`
 Запускает тесты для всего приложения. Собирает покрытие и открывает в окне браузера.
 
+<a name="npm-run-analyze"></a>
+### `npm run analyze`
+Запускает webpack bundle analyzer
+
 <a name="css-usage"></a>
 ## Использование CSS
 Мы любим css модули [подробнее тут](https://github.com/css-modules/css-modules)
 
 <a name="css-usage-global-styles"></a>
 ### Глобальные стили
-Расположение в ./components/Head/globalCss/[cssName].css
-импортим в Head.tsx
+??? Пока, специального места для глобальных стилей нет
 
 <a name="css-usage-classNames"></a>
 ### Использование classNames
