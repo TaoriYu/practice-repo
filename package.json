@@ -5,6 +5,7 @@
     "build": "env NODE_ENV=production next build",
     "start": "env NODE_ENV=production node ./server.js",
     "analyze": "env NODE_ENV=production NODE_ANALYZE=1 next build",
+    "analyze:s": "env NODE_ENV=production NODE_ANALYZE=static next build",
     "lint": "(npm run lint:code & npm run lint:styles & wait)",
     "lint:code": "tslint --project ./tsconfig.json",
     "lint:styles": "stylelint './**/*.@(less|css)'",

@@ -7,6 +7,7 @@ const STATES = {
   production: process.env.NODE_ENV === 'production',
   dev: process.env.NODE_ENV !== 'production',
   analyze: Boolean(process.env.NODE_ANALYZE),
+  analyzeStatic: process.env.NODE_ANALYZE === 'static',
 };
 
 module.exports = function withTemplate(nextConfig = {}) {
@@ -74,7 +75,12 @@ function clientSide(config, options) {
   };
 
   if (STATES.analyze) {
-    addPlugin(new BundleAnalyzerPlugin());
+    addPlugin(new BundleAnalyzerPlugin({
+      analyzerMode: STATES.analyzeStatic ? 'static' : 'server',
+      defaultSizes: 'gzip',
+      openAnalyzer: !STATES.analyzeStatic,
+      reportFilename: STATES.analyzeStatic ? '../bundle-report.html' : undefined,
+    }));
   }
 }
 
