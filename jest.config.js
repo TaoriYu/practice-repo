@@ -1,7 +1,9 @@
+const isReporterUsed = process.env.JEST_REPORT_FILE !== undefined;
+
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  testResultsProcessor: 'jest-bamboo-reporter',
+  testResultsProcessor: isReporterUsed ? 'jest-bamboo-reporter' : undefined,
   testPathIgnorePatterns: [
     '.*\.mock\.(tsx?|jsx?)',
   ],
