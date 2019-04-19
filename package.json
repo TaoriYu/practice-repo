@@ -1,9 +1,9 @@
 {
   "name": "template-app",
   "scripts": {
-    "dev": "env NODE_ENV=development next",
+    "dev": "env NODE_ENV=development node ./server.js",
     "build": "env NODE_ENV=production next build",
-    "start": "env NODE_ENV=production next start",
+    "start": "env NODE_ENV=production node ./server.js",
     "analyze": "env NODE_ENV=production NODE_ANALYZE=1 next build",
     "lint": "(npm run lint:code & npm run lint:styles & wait)",
     "lint:code": "tslint --project ./tsconfig.json",
@@ -50,7 +50,6 @@
     "ramda": "0.26.1",
     "react": "16.8.6",
     "react-dom": "16.8.6",
-    "reflect-metadata": "0.1.13",
     "ts-loader": "5.3.3"
   },
   "devDependencies": {

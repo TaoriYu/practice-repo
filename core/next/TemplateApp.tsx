@@ -1,21 +1,36 @@
-import { RouterProps } from 'next-server/router';
-import * as React from 'react';
-// @ts-ignore
-import { createUrl } from 'next/dist/pages/_app';
 import { Container as DiContainer } from 'inversify';
 import DevTools from 'mobx-react-devtools';
+import { RouterProps } from 'next-server/router';
 import App, { Container, NextAppContext } from 'next/app';
+// @ts-ignore
+import { createUrl } from 'next/dist/pages/_app';
+import * as React from 'react';
 import { IgnitionFactory } from '../../ignition';
+import { EBrowser } from '../../stores/ui';
+import { detectIE } from '../../utils/userAgent';
+import { enableLogger } from '../logger';
 import { createStoreContainer } from '../provider/createStoreContainer';
 import { Provider } from '../provider/StoreContext';
 import { getInitialProps } from './getInitialProps';
 import { templateLogger } from './templateLogger';
+
+if (!process.env.IS_SERVER) {
+  // tslint:disable-next-line:no-require-imports
+  require('intersection-observer');
+
+  if (detectIE(window.navigator.userAgent) === EBrowser.ie) {
+    // tslint:disable-next-line:no-require-imports
+    require('../../static/vendor/picturefill.min.js');
+  }
+}
 
 export interface IAppProps {
   pageProps: any;
   statusCode: number;
   container: DiContainer;
 }
+
+enableLogger();
 
 export class TemplateApp extends App<IAppProps> {
   protected appContext: DiContainer;
