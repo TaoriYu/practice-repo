@@ -33,13 +33,14 @@ function serverSide(config, options) {
   const originalEntry = config.entry;
   config.entry = async () => {
     const entries = await originalEntry();
-
-    const appEntry = Object
-      .keys(entries)
-      .find((entry) => entry && /_app\.js/.test(entry));
-
-    if (entries[appEntry] && !entries[appEntry].includes('./polyfills.js')) {
-      entries[appEntry].unshift('./polyfills.js');
+    for ( const entryKey in entries) {
+      if (
+        entries.hasOwnProperty(entryKey) &&
+        entries[entryKey] &&
+        !entries[entryKey].includes('./polyfills.js')
+      ) {
+        entries[entryKey].unshift('./polyfills.js');
+      }
     }
 
     return entries;
