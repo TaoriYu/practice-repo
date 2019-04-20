@@ -31,6 +31,7 @@
   - [hygen config](#hygen-config)
   - [Я хочу добавить свой шаблон!](#custom-template)
 - [Создание коммитов](#commit-creation)
+- [Changelog](#changelog)
 
 <a name="make-new-microservice"></a>
 ## Создание нового микросервиса
@@ -278,3 +279,306 @@ commitizen позволит создать коммит в формате [conve
 - core: изменения в core проекта.
 - stores: изменения в stores.
 
+<a name="changelog"></a>
+## Changelog
+
+### v 0.3
+
+**Features**
+
+- Добавлен polyfill для symbol (поддержка IE 11);
+- Добавлена версия в readme.md
+- Стало возможно указать среду для сервера конфигурации через CONFIG_ENV, если не задан, по прежнему берется из NODE_ENV
+- React + тайпинги подняты до версии 16.8.5
+- Изменения в Ignition:
+    - В проверки добавлен фильтр с возможностью указывать странички для которых они действуют.
+
+              /** Проверка будет выполнена только для указанных страниц */
+              includePages?: Array<Function | IConstructable>;
+              /** Проверка НЕ будет выполнена для указанных страниц */
+              excludePages?: Array<Function | IConstructable>;
+              /**
+               * Проверка будет выполнена только если pathname будет
+               * подходить под регулярное выражение, или равен строке
+               */
+              includePaths?: Array<string | RegExp>;
+              /**
+               * Проверка НЕ будет выполнена если pathname будет
+               * подходить под регулярное выражение, или равен строке
+               */
+              excludePaths?: Array<string | RegExp>;
+
+- Next JS Версии 8
+    - 16 times better memory usage with no degradation in performance.
+    - Webpack Define Plugin больше не нужен: Теперь можно так
+
+            // next.config.js
+            module.exports = {
+              env: {
+                customKey: 'MyValue'
+              }
+            }
+
+    - Full patch notes [https://nextjs.org/blog/next-8/](https://nextjs.org/blog/next-8/)
+- OApiFactory - Observable Api Factory.
+    - Не требует объявления в конструкторе
+    - Теперь запросы к API можно делать более удобным способом.
+        ```typescript
+        class MyStore {
+          @observable public article?: ArticleDto;
+          public slug: string;
+          public id: number;
+          public getArticleData = OApiFactory<ArticleDto>({
+            configKey: 'articleApi', // отсюда получаем host protocol port и прочее
+            method: 'GET',
+            endpoint: '/v1/getArticle',
+            dto: ArticleDto, // ответ будет в виде ArticleDto
+            errorDto: ArticleErrorDto, // ответ с кодом не 2ХХ будет в виде ArticleErrorDto
+            setter: (article) => this.article = article, // когда запрос отработает вызовется setter и установит значение в store
+            params: { id: () => this.id, slug: () => this.slug }, // передзапросом. вызовет каждую из функций и сформирует params
+          });
+        }
+        ```
+
+    - Аргументы:
+        - **configKey** - опционально, (по умолчанию defaultApi). Ключ конфигурации из config/apis.
+        - **method** - опционально, (по умолчанию GET). HTTP method. GET, POST, PUT, PATCH, DELETE.
+        - **endpoint**  - опционально, (по умолчанию /). Путь до api. Именно endpoint host и протокол берется из конфига при помощи configKey
+            ```typescript
+            type endpoint = () => string | string;
+            // если в endpoint указана функция она будет вызвана при вызове API.
+            class Example {
+              public id: number = 123;
+              public getArticlesApi = OApiFactory({
+                endpoint: () => `/api/v1/article/${this.id}`,
+              });
+            }
+            const example = new Example();
+            example.getArticlesApi.observe() // will go to /api/v1/article/123/
+            
+            example.id = 456;
+            example.getArticlesApi.observe() // will go to /api/v1/article/456/
+            ```
+        - **dto** - обязательный! DTO class (class-transformer) используется для сериализации данных.
+        - **errorDto** - опционально тоже что и DTO только для ошибки с сервера.
+        - **setter** - callback для установки значения ответа с сервера, должна принимать ответа типа DTO в качестве аргумента.
+            ```typescript
+            class Example {
+              public articles: ArticlesDTO[] = [];
+              public getArticlesApi = OApiFactory<ArticlesDTO[]>({
+                endpoint: '/api/v1/articles',
+                dto: ArticlesDTO,
+                errorDto: ArticlesErrorDTO,
+                // После успешного получения ответа с сервера будет вызвана
+                // функция переданная в setter. 
+                setter: (data) => this.articles = data,
+                onError: (err: ArticlesErrorDTO) => /* some error code here */,
+              });
+            }
+            
+            const example = new Example();
+            await example.getArticlesApi.observer();
+            console.log(example.articles) // -> [Article{}, Article{}, Article{}];
+            ```
+        - **onError** - callback в случае ошибки.
+        - **params** - Фабрика для QueryString аргументов.
+            ```typescript
+            class Example {
+              public id: number = 123;
+              public slug: string = 'kulesh';
+              public getArticlesApi = OApiFactory<ArticlesDTO[]>({
+                endpoint: '/api/v1/articles',
+                // перед отправкой запроса, будет вызван callback для получения актуальных
+                // данных параметров, если функция вернула undefined она будет отфильтрована из параметров
+                params: ({ id: () => this.id, slug: () => this.slug, other: () => undefined }),
+              });
+            }
+            
+            const example = new Example();
+            example.id = 777;
+            example.getArticlesApi.observe() // will go on /api/v1/articles?id=123&slug=kulesh
+            ```
+        - **data** - Фабрика для параметров post запроса.
+
+            // см. params
+
+    - API теперь умеет сохранять состояние запроса.
+        ```typescript
+        class Example {
+          public getArticlesApi = OApiFactory<ArticlesDTO[]>({
+            endpoint: '/api/v1/articles',
+          });
+        }
+        
+        const example = new Example();
+        console.log(example.getArticlesApi.state); // idle
+        example.observe();
+        console.log(example.getArticlesApi.state); // pending
+        console.log(example.getArticlesApi.state); // fulfilled
+        // можно подписаться на state используя autorun или reaction
+        autorun(store.getArticleData.state, (state) => console.log(state));
+        ```
+- Удален semantic-ui из бойлерплейта.
+- Удален lodash.
+- Добавлена ramda
+- Docker
+    - docker-compose up - поднимает dev стенд с nginx на 8080. Напрямую (в обход nginx) приложение доступно через 3000
+    - nginx.conf в папке с проектом, позволяет настраивать роутинги на backend что-бы не биться об CORS.
+    После настроек docker-compose restart
+        ```nginx
+        # для добавлеия нового роутинга:
+        #            _____ Путь до api в backend
+        #           /
+        location /api {
+          Host:       domain.preprod.itass.local # <- указываем только если идём в наш препрод
+          proxy_pass  http://domain.prerprod.itass.local/api;
+        #                              \__ адрес где хостится апишка
+        }
+        ```
+    - docker-compose up app - поднимает приложение на 3000 порту. без nginx
+
+- Сильно упорядочен next.config.js
+- Введена папка Less в компонентах где располагаются глобальные less переменные и миксины
+- Collection data type теперь deprecated
+- Базовая логика _app.tsx перенеcена в core, для упрощения работы с шаблоном.
+- Новая система store ingection
+    - Переход на более современный [mobx-react-lite](https://github.com/mobxjs/mobx-react-lite).
+        - Отказ от декораторов в пользу функций.
+        - Более удобное API
+        - Поддержка класс компонентов через костыли (здравствуй будущее реакт)
+    - Появилась возможность инжектить stores в функциональные компоненты.
+    - Сторы теперь помещаются в уникальные контексты di
+    - Более простой и понятный синтаксис
+        ```typescript jsx
+        // Пример с декларацией observer через функцию
+        export function Main() {
+          const uiStore = useStore<UiStore>(UiStore); // get store
+          const setName = () => uiStore.setName('asd');
+        
+          return useObserver(() => (
+            <div>
+              <div onClick={setName} className={styles.style}>{uiStore.name}</div>
+              {uiStore.name === 'asd' &&
+                <SomeComponent />
+              }
+            </div>
+          ));
+        }
+        
+        // Пример с использованием Observer Как компонент
+        export function Some() {
+          const someStore = useStore<SomeStore>(SomeStore);
+        
+          return (
+            <div>
+              <p> User Name Is: </p>
+              <Observer>{() => <p>{someStore.name}</p>}</Observer>
+            </div>
+          );
+        }
+        ```
+    - Для компонентов классов по прежнему поддерживается синтаксис injectStore.
+- Работа с полифилами
+    - Работа с полифилами стала удобнее, теперь достаточно включить нужный полифил из библиотеки corejs (или любой другой) в файле polyfill.js
+    - Полифилы отрабатывают и в серверной и в клиентской части, обеспечивая одинаковое поведение кода, и там и тут.
+- Добавили react hook для IntersectionObserver
+
+    *useIntersectionObserver* - это реакт хук, который предоставляет интерфейс для работы с IntersectionObserver.
+
+    - Подробнее о том,что такое *IntersectionObserver.*
+
+        [Intersection Observer API](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API)
+
+        **TL;DR:** IntersectionObserver это новое удобное апи контроля того, что один элемент пересекает другой (такой инструмент очень нужнен, когда требуется: включить анимацию, когда доскролливаем до определенного сегмента; бесконечный скролл и т.д. и т.п. Конечно же, можно каждый раз писать свою собственную шарманку, но появление единого инструмента для решения подобных задач экономит время и нервы).
+
+    - Подробнее о том, что такое React Hooks.
+
+        [Introducing Hooks - React](https://reactjs.org/docs/hooks-intro.html)
+
+    *useIntersectionObserver* работает как обычный реакт хук:
+
+    @param options - это опции настройки *IntersectionObserver*. В них можно передать:
+
+    - root - элемент, с которым пересечётся target (за которым мы следим) элемент. По умолчанию это viewport.
+    - rootMargin - служит для того, чтобы увеличивать или уменьшать каждую сторону bbox'a рута перед вычислениемпересечений. По умолчанию 0px
+    - threshold - массив значений, от 0 до 1, в которых будет прокать колбэк. Например, если мы хотим, чтобы наш колбэксрабатывал каждые 25% видимости target элемента, нужно просетить такой массив: [0, 0.25, 0.5, 0.75, 1]. Поумолчанию [].
+
+    @returns [ref, registerCallback] - возвращает массив из двух элементов:
+
+    - ref - это реф таргет элемента; с помощью него мы подцепляем html элемент к *IntersectionObserver*
+    - registerCallback - функция, которая принимает колбэк и регистрирует его в списке колбэков, который потом исполняет по очереди регистрации. Такой подход обеспечивает возможность подключения нескольких колбэков к одному обзёрверу.
+
+    ### Как его использовать?
+    ```
+        /***********************************************************
+         * ОЧЕНЬ ВАЖНОЕ УТОЧНЕНИЕ                                  *
+         * useIntersectionObserver, как и любой другой react hook  *
+         * можно использовать только в функциональных компонентах! *
+         ***********************************************************/
+    ```
+    *Предположим, что мы хотим сверстать такой html-блок, у которого будет меняться прозрачность по слудеющему правилу: 
+    если блок полностью показывается во viewport, то блок полностью непрозрачен (т.е. opacity = 1), если блок полностью 
+    скрылся - то блок становится полностью прозрачным (т.е. opacity = 0).*
+    ```typescript jsx
+        // подготовим массив threshold - мы хотим, чтобы шаг срабатывания
+        // коллбэка был 0.01, соответственно создадим 100 значений
+        const threshold: number[] = range(0.01, 100).map((_n, i) => i / 100);
+        
+        export function GreenBlock() {
+            // используем хук useState, чтобы получить состояние opacity и функцию,
+            // которая может его менять
+            const [ratio, setRatio] = React.useState(1);
+            
+            // используем хук useIntersectionObserver, чтобы получить ref и
+            // registerCallback, чтобы зарегистрировать наш коллбэк. Передадим
+            // в useIntersectionObserver наш сгенерированный массив threshold.
+            const [ref, registerCallback] = useIntersectionObserver<HTMLDivElement>({ threshold });
+            
+            // вызовем registerCallback и передадим ему функцию, которая принимает
+            // entries (массив объектов, который нам предоставляет
+            // IntersectionObserver) и для каждой entry сетим в наш стейт значение
+            // intersectionRatio. Таким образом opacity будет меняться в зависимости
+            // от вхождения таргета во viewport с шагом 0.01
+            registerCallback((entries: IntersectionObserverEntry[]) => {
+              entries.forEach(pipe(prop('intersectionRatio'), setRatio));
+            });
+        
+            return (
+              <div ref={ref} style={{ backgroundColor: `rgba(50, 205, 0, ${ratio})` }}>
+                some square
+              </div>
+            );
+          }
+    ```
+
+    В данном примере прозрачность зелёного блока зависит от состояния компонента *ratio,* которое изменяется в пределах
+    от 0 до 1. Изменение ratio обеспечивает колбэк, который принимает *entries* - позиции, соответствующие массиву
+    threshold -  которые в свою очередь предоставляет нам useIntersectionObserver, в котором мы регистрируем
+    наш коллбэк.
+
+    ### F.A.Q.
+
+    ***А что же делать, если нам нужно использовать Component или PureComponent?***
+
+    Увы, придётся всё-таки сделать из него функциональных компонент с хуками и профурсетками. Подход к снаряду с целью
+    сделать реализацию IntersectionObserver на обычном реакт компоненте, который бы вёл себя как обёртка. К сожалению,
+    такая реализация получилась громоздкой и неудобной в использовании. Реализация в виде хука намного
+    проще и прозчраней.
+
+- Добавлены скрипты:
+    - npm run analyze - запускает webpack bundle analyzer, отчет открывается в браузере
+    - npm run analyze:s -  генерирует тот же отчет что и
+    analyze но сохраняет его в ./ проекта в виде bundle-report.html (необходим для bamboo)
+- Добавлен mocha coverage reporter - для bamboo. Позволяет парсить результаты тестов при помощи bamboo
+
+### Fixes
+
+- Исправлена ошибка когда при возникновении network exception по причинам сети либо CORS, открывался overlay
+with couldn't get property _options of undefined
+- Исправлена ошибка когда сессии пользователей переписывали друг-друга так как определялись в едином сторе
+- Исправлена ошибка с чрезмерным потреблением памяти в DI Context.
+- Исправлена ошибка с переопредлением контейнера DI в dev режиме после HMR что приводило к потере
+данных полученных с сервера
+- Runtime settings в dev режиме теперь не активен.
+- Исправлена проблема, когда в dev режиме терялся конфиг на клиенте после HMR.
+- И еще три ведра багов.
