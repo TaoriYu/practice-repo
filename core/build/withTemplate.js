@@ -7,6 +7,7 @@ const STATES = {
   production: process.env.NODE_ENV === 'production',
   dev: process.env.NODE_ENV !== 'production',
   analyze: Boolean(process.env.NODE_ANALYZE),
+  analyzeStatic: process.env.NODE_ANALYZE === 'static',
 };
 
 module.exports = function withTemplate(nextConfig = {}) {
@@ -33,13 +34,14 @@ function serverSide(config, options) {
   const originalEntry = config.entry;
   config.entry = async () => {
     const entries = await originalEntry();
-
-    const appEntry = Object
-      .keys(entries)
-      .find((entry) => entry && /_app\.js/.test(entry));
-
-    if (entries[appEntry] && !entries[appEntry].includes('./polyfills.js')) {
-      entries[appEntry].unshift('./polyfills.js');
+    for ( const entryKey in entries) {
+      if (
+        entries.hasOwnProperty(entryKey) &&
+        entries[entryKey] &&
+        !entries[entryKey].includes('./polyfills.js')
+      ) {
+        entries[entryKey].unshift('./polyfills.js');
+      }
     }
 
     return entries;
@@ -73,7 +75,12 @@ function clientSide(config, options) {
   };
 
   if (STATES.analyze) {
-    addPlugin(new BundleAnalyzerPlugin());
+    addPlugin(new BundleAnalyzerPlugin({
+      analyzerMode: STATES.analyzeStatic ? 'static' : 'server',
+      defaultSizes: 'gzip',
+      openAnalyzer: !STATES.analyzeStatic,
+      reportFilename: STATES.analyzeStatic ? '../bundle-report.html' : undefined,
+    }));
   }
 }
 
