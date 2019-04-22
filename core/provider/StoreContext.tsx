@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Container } from 'inversify';
-import { createStoreContainer } from './createStoreContainer';
 import { TStoreName } from './store.store';
 
-const storeContext = React.createContext<Container>(createStoreContainer());
+// tslint:disable-next-line:no-null-keyword
+const storeContext = React.createContext<Container>(null as any);
 
 export interface IProviderProps {
   value: Container;
