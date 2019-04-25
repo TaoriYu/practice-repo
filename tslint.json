@@ -198,7 +198,6 @@
     "jsx-alignment": true,
     "no-parameter-reassignment": true,
     "deprecation": true,
-    "newline-before-return": true,
     "callable-types": false,
     "object-curly-spacing": [
       true,
