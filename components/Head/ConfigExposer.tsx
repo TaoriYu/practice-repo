@@ -1,10 +1,13 @@
 import * as React from 'react';
-import { AppConfigurationService } from '../../config';
-import { useStore } from '../../core/provider/StoreContext';
+import { IConfigFields } from '../../config';
+import { TCompiledConfigFields } from '../../core/config';
 
-export function ConfigExposer() {
-  const conf = useStore<AppConfigurationService>(AppConfigurationService).publicRuntimeConfig;
-  const cfgScript = `window.__CONFIGURATION__ = JSON.parse('${JSON.stringify(conf)}')`;
+interface IConfigExposerProps {
+  config: TCompiledConfigFields<IConfigFields>;
+}
+
+export function ConfigExposer({ config }: IConfigExposerProps) {
+  const cfgScript = `window.__CONFIGURATION__ = JSON.parse('${JSON.stringify(config)}')`;
 
   return (
     <script dangerouslySetInnerHTML={{ __html: cfgScript }} />

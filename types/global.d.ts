@@ -7,5 +7,6 @@ declare module NodeJS  {
 }
 
 interface Window {
+  picturefillCFG: string[][];
   MSInputMethodContext: any;
 }

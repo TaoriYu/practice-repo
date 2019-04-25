@@ -1,15 +1,18 @@
-import { RouterProps } from 'next-server/router';
-import * as React from 'react';
-// @ts-ignore
-import { createUrl } from 'next/dist/pages/_app';
 import { Container as DiContainer } from 'inversify';
 import DevTools from 'mobx-react-devtools';
+import { RouterProps } from 'next-server/router';
 import App, { Container, NextAppContext } from 'next/app';
+// @ts-ignore
+import { createUrl } from 'next/dist/pages/_app';
+import * as React from 'react';
 import { IgnitionFactory } from '../../ignition';
+import { includePolyfills } from '../../utils/polyfills';
 import { createStoreContainer } from '../provider/createStoreContainer';
 import { Provider } from '../provider/StoreContext';
 import { getInitialProps } from './getInitialProps';
 import { templateLogger } from './templateLogger';
+
+includePolyfills();
 
 export interface IAppProps {
   pageProps: any;
