@@ -1,12 +1,12 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, CancelTokenSource } from 'axios';
+import invariant from 'invariant';
 import { observable } from 'mobx';
 import { fromPromise } from 'mobx-utils';
+import { call, complement, concat, filter, identity, isNil, map, mergeDeepWith, prop, propOr } from 'ramda';
 import { random } from '../../utils/fn';
 import { BaseAPi } from './baseApi';
 import { EApiState, TRunConfiguration } from './inrefaces';
 import { IOApiConfig } from './oApiFactory';
-import { call, map, propOr, identity, prop, filter, complement, isNil } from 'ramda';
-import invariant from 'invariant';
 
 /**
  * Абстракция над AXIOS для работы с HTTP-API, преднастроеным из AppConfig
@@ -73,9 +73,9 @@ export class Api<DtoClass, ErrorDtoClass = {}> extends BaseAPi {
     const axiosConfig: AxiosRequestConfig = {
       cancelToken: this.requestToken!.token,
       url: this.refreshUrl(),
-      params: this.getOApiParams(),
       data: this.getOApiData(),
       ...config,
+      params: mergeDeepWith(concat, this.getOApiParams(), config.params || {}),
       ...customConfigFields,
     };
 
