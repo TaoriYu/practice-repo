@@ -40,7 +40,17 @@ module.exports = (nextConfig = {}) => {
 
       config.module.rules.push({
         test: /\.(less|css)$/,
-        use: options.defaultLoaders.less,
+        exclude: [/\.critical\.(less|css)$/],
+        use: options.defaultLoaders.less
+      });
+
+      config.module.rules.push({
+        test: /\.critical\.less$/,
+        use: [
+          { loader: 'to-string-loader' },
+          { loader: 'css-loader', options: { importLoaders: 1 } },
+          { loader: 'less-loader' },
+        ].filter(Boolean),
       });
 
       if (typeof nextConfig.webpack === 'function') {

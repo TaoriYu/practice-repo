@@ -1,0 +1,12 @@
+##########################
+#    BUILD DOCKERFILE    #
+##########################
+FROM node:10.15.0-alpine
+# JQ - нужен для парсинга webpack bundle analyzer'a
+RUN apk add jq
+
+RUN mkdir /app
+WORKDIR /app
+COPY . .
+
+RUN npm i --loglevel error
