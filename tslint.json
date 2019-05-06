@@ -202,7 +202,7 @@
     "object-curly-spacing": [
       true,
       "always",
-      { "arraysInObjects": false, "objectsInObjects": true }
+      { "arraysInObjects": true, "objectsInObjects": true }
     ],
     "space-in-parens": [true, "never"]
   },
