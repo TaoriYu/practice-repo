@@ -1,5 +1,5 @@
 import * as React from 'react';
-import style from '../../global.critical.less';
+import style from '../../Less/global.critical.less';
 
 /* Тут расположены критичные ЦСС они инлайнятся в html и пользователь получает их немедленно */
 export function GlobalStyles() {
