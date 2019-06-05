@@ -2,7 +2,7 @@
 to: <%= cwd %>/<%= h.ucFirst(name) %>/<%= h.ucFirst(name) %>.tsx
 ---
 import * as React from 'react';
-import * as styles from './<%= h.lcFirst(name) %>.css';
+import * as styles from './<%= h.lcFirst(name) %>.less';
 
 export interface I<%= h.ucFirst(name) %>Props {
   children?: React.ReactNode;
