@@ -9,7 +9,7 @@ export function <%= h.ucFirst(name) %>() {
     <div />
   );
 }
-<% } %>
+<% } -%>
 <% if (typeof pure !== "undefined") { -%>
 export class <%= h.ucFirst(name) %> extends React.PureComponent {
   public render() {
@@ -18,4 +18,4 @@ export class <%= h.ucFirst(name) %> extends React.PureComponent {
     );
   }
 }
-<% } %>
+<% } -%>
