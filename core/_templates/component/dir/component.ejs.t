@@ -2,25 +2,21 @@
 to: <%= cwd %>/<%= h.ucFirst(name) %>/<%= h.ucFirst(name) %>.tsx
 ---
 import * as React from 'react';
-import * as styles from './<%= h.lcFirst(name) %>.css';
+import * as styles from './<%= h.lcFirst(name) %>.less';
 
-export interface I<%= h.ucFirst(name) %>Props {
-  children?: React.ReactNode;
-}
 <% if (typeof pure === "undefined") { -%>
-export function <%= h.ucFirst(name) %>({ children }: I<%= h.ucFirst(name) %>Props) {
+export function <%= h.ucFirst(name) %>() {
   return (
-    <div className={styles.style}>{children}</div>
+    <div className={styles.style} />
   );
 }
-<% } %>
+<% } -%>
 <% if (typeof pure !== "undefined") { -%>
-export class <%= h.ucFirst(name) %> extends React.PureComponent<I<%= h.ucFirst(name) %>Props>{
+export class <%= h.ucFirst(name) %> extends React.PureComponent {
   public render() {
-    const { children } = this.props;
     return (
-      <div className={styles.style}>{children}</div>
+      <div className={styles.style} />
     );
   }
 }
-<% } %>
+<% } -%>
