@@ -34,7 +34,7 @@
     ]
   },
   "dependencies": {
-    "axios": "0.18.0",
+    "axios": "0.18.1",
     "class-transformer": "0.2.0",
     "classnames": "2.2.6",
     "core-js": "3.0.1",
