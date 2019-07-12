@@ -75,6 +75,7 @@ export class Api<DtoClass, ErrorDtoClass = {}> extends BaseAPi {
       url: this.refreshUrl(),
       data: this.getOApiData(),
       ...config,
+      headers: this.getOApiHeaders(),
       params: mergeDeepWith(concat, this.getOApiParams(), config.params || {}),
       ...customConfigFields,
     };
@@ -131,6 +132,10 @@ export class Api<DtoClass, ErrorDtoClass = {}> extends BaseAPi {
 
   private getOApiParams() {
     return map(call, propOr({}, 'params', this.OApiConfig!));
+  }
+
+  private getOApiHeaders() {
+    return map(call, propOr({}, 'headers', this.OApiConfig!));
   }
 
   private getOApiData() {

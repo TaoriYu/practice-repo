@@ -12,7 +12,7 @@ export class PhotosStore {
   public readonly getPhotos = OApiFactory<PhotoDto[]>({
     endpoint: '/photos',
     params: { page: () => 1 },
-    headers: { Authorization: () => accessKey },
+    headers: { Authorization: () => `Client-ID ${accessKey}` },
     dto: PhotoDto,
     setter: (photos) => this.photos = photos,
   });
