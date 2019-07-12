@@ -14,7 +14,7 @@ export class PhotosStoreCheck implements ICheck {
 
   public async serverSide(): Promise<IPhotosCheckData> {
     await this.photoStore.getPhotos.observe();
-    return { photos: classToPlain(this.photoStore.photos) as PhotoDto[] };
+    return { photos: classToPlain(this.photoStore.photos.slice()) as PhotoDto[] };
   }
 
   public clientSide({ photos }: IPhotosCheckData): void {
