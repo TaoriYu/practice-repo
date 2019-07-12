@@ -1,5 +1,5 @@
 import { Expose, Type } from 'class-transformer';
-import { PhotoLinksDto, PhotoUrlDto } from './photoDtos';
+import { PhotoLinksDto, PhotoUrlDto, UserDto } from './photoDtos';
 
 export class PhotoDto {
   /** идентификатор */
@@ -27,4 +27,13 @@ export class PhotoDto {
   @Expose()
   @Type(() => PhotoLinksDto)
   public links: PhotoLinksDto = new PhotoLinksDto();
+
+  /** number of likes of photo */
+  @Expose()
+  public likes: number = 0;
+
+  /** user info */
+  @Expose()
+  @Type(() => UserDto)
+  public user: UserDto = new UserDto();
 }
