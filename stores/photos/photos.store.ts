@@ -9,7 +9,7 @@ export class PhotosStore {
   /** photos from unsplash */
   @observable public photos: PhotoDto[] = [];
 
-  private readonly getPhotos = OApiFactory<PhotoDto[]>({
+  public readonly getPhotos = OApiFactory<PhotoDto[]>({
     endpoint: '/photos',
     params: { page: () => 1 },
     headers: { Authorization: () => accessKey },
