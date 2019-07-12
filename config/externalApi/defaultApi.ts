@@ -3,12 +3,12 @@ import { IWithEnv } from '../../core/config';
 
 export const defaultApi: IWithEnv<IApi> = {
   dev: {
-    baseURL: 'http://localhost:3000/api',
+    baseURL: '/api',
     timeout: 2000,
     public: true,
   },
   production: {
-    baseURL: 'http://localhost:3000/api',
+    baseURL: '/api',
     timeout: 2000,
     public: true,
   },

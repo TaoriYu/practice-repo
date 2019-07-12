@@ -21,3 +21,5 @@ yarn-error.log*
 /.idea
 # отчет webpack bundle analyzer
 bundle-report.html
+
+secret.ts
