@@ -56,5 +56,5 @@ export interface IUser {
   /** bio */
   bio?: string;
   /** links to profile images */
-  profileImage: IProfileImage;
+  profileImage?: IProfileImage;
 }
