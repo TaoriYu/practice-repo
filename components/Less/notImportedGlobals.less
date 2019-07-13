@@ -1,0 +1,9 @@
+@import './global';
+
+:global {
+  each(@all-colors, {
+    .fill-@{key} {
+      fill: @value;
+    }
+  });
+}
