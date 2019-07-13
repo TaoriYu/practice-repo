@@ -2,7 +2,7 @@ import { Expose, Type } from 'class-transformer';
 import { PhotoLinksDto, PhotoUrlDto, UserDto } from './photoDtos';
 
 export class PhotoDto {
-  /** идентификатор */
+  /** id of the picture */
   @Expose()
   public id: string = '';
 
