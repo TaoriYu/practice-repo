@@ -21,5 +21,5 @@ export class UserDto {
   /** links to profile images */
   @Expose()
   @Type(() => ProfileImageDto)
-  public profileImage: ProfileImageDto = new ProfileImageDto();
+  public profileImage?: ProfileImageDto = new ProfileImageDto();
 }
