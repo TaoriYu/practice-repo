@@ -4,7 +4,7 @@ import s from './userInfo.less';
 interface IUserInfoProps {
   name: string;
   username: string;
-  avatarUrl: string;
+  avatarUrl?: string;
 }
 
 export function UserInfo({ name, username, avatarUrl }: IUserInfoProps) {

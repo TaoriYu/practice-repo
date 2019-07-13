@@ -2,6 +2,7 @@
 import '../di/container';
 
 import * as React from 'react';
+import '../components/Less/notImportedGlobals.less';
 import DevTools from 'mobx-react-devtools';
 import { Container, NextAppContext } from 'next/app';
 import { enableLogger } from '../core/logger';
