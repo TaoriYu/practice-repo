@@ -4,19 +4,14 @@ import { IImageCard } from './imageCard.interdace';
 import s from './imageCard.less';
 import { Likes } from './Likes';
 import { UserInfo } from './UserInfo';
-import { range } from 'ramda';
 import classNames from 'classnames';
-
-const threshold: number[] = range(0.01, 100).map((_n, i) => i / 100);
 
 export function ImageCard({ user, likes, urls, altDescription }: IImageCard) {
   const [visible, setVisibility] = React.useState(false);
   const [ref, registerCallback] =
-    useIntersectionObserver<HTMLLIElement>({ threshold, rootMargin: '100px' });
+    useIntersectionObserver<HTMLLIElement>({ threshold: [0.1], rootMargin: '50px' });
   registerCallback((entries: IntersectionObserverEntry[]) => {
-    entries.forEach(({ intersectionRatio }) => {
-      setVisibility(intersectionRatio > 0);
-    });
+    setVisibility(entries[0].intersectionRatio > 0);
   });
 
   return (
