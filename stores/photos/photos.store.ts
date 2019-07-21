@@ -1,5 +1,5 @@
-import { observable, reaction } from 'mobx';
-import { OApiFactory } from '../../core/api';
+import { computed, observable } from 'mobx';
+import { EApiState, OApiFactory } from '../../core/api';
 import { makeStore } from '../../core/provider';
 import { accessKey } from '../../secret';
 import { PhotoDto } from './photo.dto';
@@ -27,11 +27,9 @@ export class PhotosStore {
     setter: (photos) => this.photos = this.photos.concat(photos),
   });
 
-  public constructor() {
-    reaction(() => this.pages, () => this.getNextPage.observe());
-  }
-
-  public IncrementPages() {
-    this.pages = this.pages + 1;
+  @computed
+  public get isApiFetching(): boolean {
+    return this.getPhotos.state === EApiState.pending ||
+      this.getNextPage.state === EApiState.pending;
   }
 }

@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useStore } from '../../core/provider/useStore';
 import { PhotosStore } from '../../stores/photos';
 import { assignKey } from '../../utils/fn';
+import { PaginationDetector } from '../shared/PaginationDetector';
 import { ImageCard } from './ImageCard';
 import { intersperse } from 'ramda';
 import s from './indexPageLayout.less';
@@ -12,6 +13,7 @@ export function IndexPageLayout() {
   return (
     <section role="list of photos section" className={s.photosList}>
       {assignKey(intersperse(<div className={s.break} />, photosStore.photos.map(ImageCard)))}
+      {photosStore.isApiFetching && <PaginationDetector />}
     </section>
   );
 }
