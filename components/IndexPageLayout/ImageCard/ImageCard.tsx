@@ -8,8 +8,11 @@ import classNames from 'classnames';
 
 export function ImageCard({ user, likes, urls, altDescription }: IImageCard) {
   const [visible, setVisibility] = React.useState(false);
-  const [ref, registerCallback] =
-    useIntersectionObserver<HTMLLIElement>({ threshold: [0.1], rootMargin: '50px' });
+  const [ref, registerCallback] = useIntersectionObserver<HTMLLIElement>({
+    threshold: [0.1],
+    rootMargin: '50px',
+  });
+
   registerCallback((entries: IntersectionObserverEntry[]) => {
     setVisibility(entries[0].intersectionRatio > 0);
   });
