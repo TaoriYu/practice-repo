@@ -1,17 +1,23 @@
 import * as React from 'react';
+import { useObserver } from 'mobx-react-lite';
 import { useStore } from '../../core/provider/useStore';
 import { PhotosStore } from '../../stores/photos';
-import { assignKey } from '../../utils/fn';
+import { PaginationDetector } from '../shared/PaginationDetector';
 import { ImageCard } from './ImageCard';
-import { intersperse } from 'ramda';
 import s from './indexPageLayout.less';
 
 export function IndexPageLayout() {
   const photosStore = useStore<PhotosStore>(PhotosStore);
 
-  return (
+  return useObserver(() => (
     <section role="list of photos section" className={s.photosList}>
-      {assignKey(intersperse(<div className={s.break} />, photosStore.photos.map(ImageCard)))}
+      {photosStore.photos.map((data, i, arr) =>
+        <React.Fragment key={i}>
+          <ImageCard {...data} />
+          {i < arr.length - 1 && <div className={s.break} />}
+        </React.Fragment>,
+      )}
+      {!photosStore.isApiFetching && <PaginationDetector />}
     </section>
-  );
+  ));
 }
