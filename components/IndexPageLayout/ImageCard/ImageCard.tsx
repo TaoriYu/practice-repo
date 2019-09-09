@@ -4,6 +4,7 @@ import { IImageCard } from './imageCard.interdace';
 import s from './imageCard.less';
 import { Likes } from './Likes';
 import { UserInfo } from './UserInfo';
+import { Image } from '../../shared/Image';
 import classNames from 'classnames';
 
 export function ImageCard({ user, likes, urls, altDescription }: IImageCard) {
@@ -32,7 +33,7 @@ export function ImageCard({ user, likes, urls, altDescription }: IImageCard) {
             </div>
 
             <div className={s.imageBlock}>
-              <img srcSet={urls.small} alt={altDescription} className={s.image} />
+              <Image defaultSrc={urls.small} alt={altDescription} />
             </div>
           </div>
         </div>
