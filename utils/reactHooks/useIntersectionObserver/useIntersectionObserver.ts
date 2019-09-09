@@ -82,7 +82,7 @@ export function useIntersectionObserver<T extends HTMLElement>(options: Intersec
       }
       callbacks.clear();
     };
-  }, []);
+  });
 
   return [ref, registerCallback];
 }

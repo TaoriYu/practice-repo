@@ -32,7 +32,7 @@ export function ImageCard({ user, likes, urls, altDescription }: IImageCard) {
             </div>
 
             <div className={s.imageBlock}>
-              <img srcSet={urls.thumb} alt={altDescription} className={s.image} />
+              <img srcSet={urls.small} alt={altDescription} className={s.image} />
             </div>
           </div>
         </div>
