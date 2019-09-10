@@ -15,7 +15,5 @@ export function Paginator({ paginateAction }: IPaginatorProps) {
     }
   });
 
-  return (
-    <div ref={ref} />
-  );
+  return <div ref={ref} />;
 }
