@@ -2,12 +2,18 @@ import * as React from 'react';
 import { useObserver } from 'mobx-react-lite';
 import { useStore } from '../../core/provider/useStore';
 import { PhotosStore } from '../../stores/photos';
-import { PaginationDetector } from '../shared/PaginationDetector';
+import { SearchPhotosStore } from '../../stores/photos/searchPhotos.store';
+import { Paginator } from '../shared/PaginationDetector';
 import { ImageCard } from './ImageCard';
 import s from './indexPageLayout.less';
 
 export function IndexPageLayout() {
   const photosStore = useStore<PhotosStore>(PhotosStore);
+  const searchPhotosStore = useStore<SearchPhotosStore>(SearchPhotosStore);
+  const paginateSearch = () => {
+    searchPhotosStore.page += 1;
+    searchPhotosStore.searchNextPhotos.observe();
+  };
 
   return useObserver(() => (
     <section role="list of photos section" className={s.photosList}>
@@ -17,7 +23,7 @@ export function IndexPageLayout() {
           {i < arr.length - 1 && <div className={s.break} />}
         </React.Fragment>,
       )}
-      {!photosStore.isApiFetching && <PaginationDetector />}
+      {!photosStore.isApiFetching && <Paginator paginateAction={paginateSearch} />}
     </section>
   ));
 }
