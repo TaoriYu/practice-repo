@@ -1,3 +1,3 @@
 export * from './runtimeSettingsCheck';
 export * from './uiStoreCheck';
-export * from './photosStoreCheck';
+export * from './searchPhotosStoreCheck';
