@@ -1,1 +1,1 @@
-export * from './PaginationDetector';
+export * from './Paginator';
