@@ -39,7 +39,7 @@ export function Image({ defaultSrc, alt, sources, lazy = false }: IImageProps) {
   /** when lazy prop is set, state should initialize with props */
   const lazyState: IImageState = { defaultSrcState: '', sourcesState: []};
   /** settings for intersection observer */
-  const intersectionSettings = { rootMargin: '50px 0px 0px 0px', threshold: 0.1 };
+  const intersectionSettings = { rootMargin: '100px 0px 0px 0px', threshold: 0.1 };
   const [imageState, setImageState] = React.useState<IImageState>(lazy ? lazyState : state);
   const [ref, registerCallback] = useIntersectionObserver<HTMLImageElement>(intersectionSettings);
 
