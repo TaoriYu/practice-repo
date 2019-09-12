@@ -3,7 +3,7 @@ import { useObserver } from 'mobx-react-lite';
 import { useStore } from '../../core/provider/useStore';
 import { PhotosStore } from '../../stores/photos';
 import { SearchPhotosStore } from '../../stores/photos/searchPhotos.store';
-import { Paginator } from '../shared/PaginationDetector';
+import { Paginator } from '../shared/Paginator';
 import { ImageCard } from './ImageCard';
 import s from './indexPageLayout.less';
 
