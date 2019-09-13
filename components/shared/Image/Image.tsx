@@ -2,6 +2,9 @@ import * as React from 'react';
 import { useIntersectionObserver } from '../../../utils/reactHooks/useIntersectionObserver';
 import * as styles from './image.less';
 
+/** settings for intersection observer */
+const intersectionSettings = { rootMargin: '100px 0px 0px 0px', threshold: 0.1 };
+
 /**
  * This Image component purpose is to make it easy to
  * load photo in any way: with lazy loading, preloader,
@@ -24,9 +27,11 @@ interface IImageProps {
   sources?: ISources[];
   /** trigger lazy loading for photos */
   lazy?: boolean;
+  /** USE AS PRELOADER - allow to show preloader while image is loading */
+  children?: React.ReactNode;
 }
 
-export function Image({ defaultSrc, alt, sources, lazy = false }: IImageProps) {
+export function Image({ defaultSrc, alt, sources, children, lazy = false }: IImageProps) {
   /**
    * State for default src of image: it would be empty string if we want to use lazy
    * mode; otherwise - prop value.
@@ -37,9 +42,11 @@ export function Image({ defaultSrc, alt, sources, lazy = false }: IImageProps) {
    * otherwise - it is initialize with prop value.
    */
   const [sourcesState, setSourcesState] = React.useState(lazy ? [] : sources);
-  /** settings for intersection observer */
-  const intersectionSettings = { rootMargin: '100px 0px 0px 0px', threshold: 0.1 };
+  /** State for showing preloader component */
+  const [showPreloader, setShowPreloader] = React.useState(lazy && children);
   const [ref, registerCallback] = useIntersectionObserver<HTMLImageElement>(intersectionSettings);
+
+  const handleImageLoading = () => { setShowPreloader(false); };
 
   if (lazy) {
     registerCallback((entries) => {
@@ -51,11 +58,20 @@ export function Image({ defaultSrc, alt, sources, lazy = false }: IImageProps) {
   }
 
   return (
-    <picture>
-      {sourcesState && sourcesState.map(({ media, src }) =>
-        <source src={src} media={media} key={media} />,
-      )}
-      <img ref={ref} src={defaultSrcState} alt={alt} className={styles.image} />
-    </picture>
+    <div className={styles.imageBox}>
+      <picture>
+        {sourcesState && sourcesState.map(({ media, src }) =>
+          <source src={src} media={media} key={media} />,
+        )}
+        <img
+          ref={ref}
+          src={defaultSrcState}
+          alt={alt}
+          className={styles.image}
+          onLoad={handleImageLoading}
+        />
+      </picture>
+      {showPreloader && (children)}
+    </div>
   );
 }

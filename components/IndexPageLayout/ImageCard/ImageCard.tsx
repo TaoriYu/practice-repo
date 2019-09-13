@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Skeleton } from '../../shared/Image/Skeleton';
 import { IImageCard } from './imageCard.interdace';
 import s from './imageCard.less';
 import { Likes } from './Likes';
@@ -21,7 +22,9 @@ export function ImageCard({ user, likes, urls, altDescription }: IImageCard) {
         </div>
 
         <div className={s.imageBlock}>
-          <Image lazy defaultSrc={urls.small} alt={altDescription} />
+          <Image lazy defaultSrc={urls.small} alt={altDescription}>
+            <Skeleton />
+          </Image>
         </div>
       </div>
     </li>
