@@ -27,11 +27,11 @@ interface IImageProps {
   sources?: ISources[];
   /** trigger lazy loading for photos */
   lazy?: boolean;
-  /** USE AS PRELOADER - allow to show preloader while image is loading */
-  children?: React.ReactNode;
+  /** allow to show preloader while image is loading */
+  Preloader?: any; // TODO: find the way to type this normally
 }
 
-export function Image({ defaultSrc, alt, sources, children, lazy = false }: IImageProps) {
+export function Image({ defaultSrc, alt, sources, Preloader, lazy = false }: IImageProps) {
   /**
    * State for default src of image: it would be empty string if we want to use lazy
    * mode; otherwise - prop value.
@@ -43,7 +43,7 @@ export function Image({ defaultSrc, alt, sources, children, lazy = false }: IIma
    */
   const [sourcesState, setSourcesState] = React.useState(lazy ? [] : sources);
   /** State for showing preloader component */
-  const [showPreloader, setShowPreloader] = React.useState(lazy && children);
+  const [showPreloader, setShowPreloader] = React.useState(lazy && Preloader);
   const [ref, registerCallback] = useIntersectionObserver<HTMLImageElement>(intersectionSettings);
 
   const handleImageLoading = () => { setShowPreloader(false); };
@@ -71,7 +71,7 @@ export function Image({ defaultSrc, alt, sources, children, lazy = false }: IIma
           onLoad={handleImageLoading}
         />
       </picture>
-      {showPreloader && (children)}
+      {showPreloader && <Preloader />}
     </div>
   );
 }

@@ -22,9 +22,7 @@ export function ImageCard({ user, likes, urls, altDescription }: IImageCard) {
         </div>
 
         <div className={s.imageBlock}>
-          <Image lazy defaultSrc={urls.small} alt={altDescription}>
-            <Skeleton />
-          </Image>
+          <Image lazy defaultSrc={urls.small} alt={altDescription} Preloader={Skeleton} />
         </div>
       </div>
     </li>
